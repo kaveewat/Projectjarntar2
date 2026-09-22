@@ -206,7 +206,12 @@ export default function CreateListingPage() {
       }
     } catch (err) {
       console.error('Submit listing error:', err);
+      const details = err.response?.data?.error?.details;
+      const detailText = Array.isArray(details) && details.length > 0
+        ? details.map((d) => d.message).join(', ')
+        : null;
       setErrorMsg(
+        detailText ||
         err.response?.data?.error?.message ||
         err.response?.data?.message ||
         'เกิดข้อผิดพลาดในการลงขายไอดี กรุณาตรวจสอบข้อมูล'

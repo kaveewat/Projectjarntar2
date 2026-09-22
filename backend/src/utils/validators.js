@@ -109,7 +109,7 @@ const createListingSchema = Joi.object({
     'number.positive': 'Asking price must be a positive number',
     'any.required': 'Asking price is required',
   }),
-  team_strength: Joi.number().integer().min(1000).max(4000).optional().allow(null),
+  team_strength: Joi.number().integer().min(0).max(99999).optional().allow(null),
   player_ids: Joi.alternatives().try(
     Joi.array().items(Joi.number().integer().positive()),
     Joi.string()
