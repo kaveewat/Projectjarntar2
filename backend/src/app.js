@@ -40,8 +40,12 @@ const marketplaceRoutes = require('./routes/marketplace');
 const createApp = () => {
   const app = express();
 
-  // 1. Security Headers
-  app.use(helmet());
+  // 1. Security Headers (Allow cross-origin for static assets & uploaded images)
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    })
+  );
 
   // 2. CORS
   app.use(cors(corsOptions));
@@ -76,11 +80,22 @@ const createApp = () => {
   <text x="300" y="180" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#58A6FF" text-anchor="middle">VERIFIED AI VALUATION</text>
 </svg>`;
 
-  app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')), (_req, res) => {
-    res.setHeader('Content-Type', 'image/svg+xml');
-    res.setHeader('Cache-Control', 'public, max-age=86400');
-    return res.status(200).send(defaultSquadSvg);
-  });
+  app.use(
+    '/uploads',
+    (req, res, next) => {
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      next();
+    },
+    express.static(path.resolve(__dirname, '../uploads')),
+    (_req, res) => {
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Content-Type', 'image/svg+xml');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.status(200).send(defaultSquadSvg);
+    }
+  );
 
   // 5. API v1 Routes
   app.use('/api/v1/health', healthRoutes);
