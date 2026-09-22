@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import PlayerCard from '../components/players/PlayerCard';
 import './PlayersPage.css';
 
@@ -45,7 +45,7 @@ export default function PlayersPage() {
       if (debouncedSearch) params.name     = debouncedSearch;
       if (position)        params.position = position;
 
-      const res = await axios.get('/api/v1/players', { params });
+      const res = await api.get('/players', { params });
       // Backend returns { success, data: [...], meta: { total, ... } }
       if (res.data?.success && Array.isArray(res.data.data)) {
         setPlayers(res.data.data);

@@ -42,6 +42,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import listingsApi from '../services/listings.api';
 import ordersApi from '../services/orders.api';
 import { useAuth } from '../contexts/AuthContext';
+import { resolveImageUrl } from '../utils/imageUrl';
 
 export default function ListingDetailPage() {
   const { id } = useParams();
@@ -169,6 +170,9 @@ export default function ListingDetailPage() {
   } = listing;
 
   const isOwner = user?.id === seller_id;
+  const resolvedImages = (Array.isArray(squad_images) ? squad_images : [])
+    .map(resolveImageUrl)
+    .filter(Boolean);
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
@@ -201,11 +205,11 @@ export default function ListingDetailPage() {
               mb: 3,
             }}
           >
-            {squad_images.length > 0 && !imgError ? (
+            {resolvedImages.length > 0 && !imgError ? (
               <Box sx={{ position: 'relative', width: '100%', maxHeight: 440, bgcolor: '#0D1117' }}>
                 <CardMedia
                   component="img"
-                  image={squad_images[selectedImgIndex] || squad_images[0]}
+                  image={resolvedImages[selectedImgIndex] || resolvedImages[0]}
                   alt={title}
                   onError={() => setImgError(true)}
                   sx={{
@@ -237,9 +241,9 @@ export default function ListingDetailPage() {
             )}
 
             {/* Thumbnail selector if multiple images */}
-            {squad_images.length > 1 && (
+            {resolvedImages.length > 1 && (
               <Stack direction="row" spacing={1} sx={{ p: 1.5, bgcolor: '#0D1117', overflowX: 'auto' }}>
-                {squad_images.map((imgUrl, idx) => (
+                {resolvedImages.map((imgUrl, idx) => (
                   <Box
                     key={idx}
                     component="img"

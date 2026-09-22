@@ -21,6 +21,7 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { resolveImageUrl } from '../../utils/imageUrl';
 
 // Helper for platform icon
 function getPlatformIcon(platformSlug) {
@@ -62,7 +63,7 @@ export default function ListingCard({ listing }) {
   const [imgError, setImgError] = useState(false);
 
   const squadImg =
-    Array.isArray(squad_images) && squad_images.length > 0 ? squad_images[0] : null;
+    Array.isArray(squad_images) && squad_images.length > 0 ? resolveImageUrl(squad_images[0]) : null;
 
   // Format featured players into array of chips (max 3)
   const rarePlayersList = featured_players

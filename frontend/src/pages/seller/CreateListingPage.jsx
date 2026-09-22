@@ -34,8 +34,7 @@ import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import StarsIcon from '@mui/icons-material/Stars';
-import axios from 'axios';
-
+import api from '../../services/api';
 import listingsApi from '../../services/listings.api';
 
 export default function CreateListingPage() {
@@ -106,7 +105,7 @@ export default function CreateListingPage() {
       }
       setSearching(true);
       try {
-        const res = await axios.get('/api/v1/players', {
+        const res = await api.get('/players', {
           params: { name: debouncedSearch, limit: 12 },
         });
         if (active) {
