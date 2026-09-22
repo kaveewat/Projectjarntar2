@@ -147,7 +147,7 @@ export default function LoginPage() {
               size="small"
               variant="outlined"
               color="secondary"
-              onClick={() => handleQuickLogin('seller1@test.com', 'Seller@123456')}
+              onClick={() => handleQuickLogin('bugko@gmail.com', '123456')}
               sx={{ justifyContent: 'space-between' }}
             >
               <span>🏪 ผู้ขายยืนยันตัวตน (Verified Seller)</span>
@@ -157,7 +157,7 @@ export default function LoginPage() {
               size="small"
               variant="outlined"
               color="primary"
-              onClick={() => handleQuickLogin('buyer1@test.com', 'Buyer@123456')}
+              onClick={() => handleQuickLogin('bugboy@gmail.com', '123456')}
               sx={{ justifyContent: 'space-between' }}
             >
               <span>🛒 ผู้ซื้อทั่วไป (Active Buyer)</span>
