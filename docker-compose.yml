@@ -1,0 +1,115 @@
+services:
+  # ─────────────────────────────────────────────────
+  #  MySQL 8.0  (service name: db)
+  # ─────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: efootball_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${MYSQL_DATABASE}
+      MYSQL_USER:          ${MYSQL_USER}
+      MYSQL_PASSWORD:      ${MYSQL_PASSWORD}
+      TZ:                  Asia/Bangkok
+    ports:
+      - "${MYSQL_HOST_PORT:-3307}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
+             "-u", "root", "--password=${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - efootball_net
+
+  # ─────────────────────────────────────────────────
+  #  phpMyAdmin
+  # ─────────────────────────────────────────────────
+  phpmyadmin:
+    image: phpmyadmin:latest
+    platform: linux/amd64
+    container_name: efootball_phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PMA_HOST: ${PMA_HOST:-db}
+      PMA_PORT: ${PMA_PORT:-3306}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "${PMA_HOST_PORT:-8081}:80"
+    networks:
+      - efootball_net
+
+  # ─────────────────────────────────────────────────
+  #  Backend — Node.js + Express
+  # ─────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: efootball_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV:    ${NODE_ENV:-development}
+      PORT:        ${BACKEND_PORT:-5001}
+      DB_HOST:     ${DB_HOST:-db}
+      DB_PORT:     ${DB_PORT:-3306}
+      DB_NAME:     ${DB_NAME:-efootball_db}
+      DB_USER:     ${DB_USER:-efootball_user}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET:        ${JWT_SECRET}
+      AI_VISION_API_KEY: ${AI_VISION_API_KEY}
+      AI_VISION_MODEL:   ${AI_VISION_MODEL:-gemini-3.6-flash}
+      TZ:                Asia/Bangkok
+    ports:
+      - "${BACKEND_PORT:-5001}:${BACKEND_PORT:-5001}"
+    volumes:
+      - ./backend:/app        # bind mount — hot reload
+      - /app/node_modules     # anonymous volume — prevent host overwrite
+    networks:
+      - efootball_net
+
+  # ─────────────────────────────────────────────────
+  #  Frontend — React + Vite
+  # ─────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: efootball_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:5001/api/v1}
+      VITE_BACKEND_TARGET: http://backend:5001
+    ports:
+      - "${FRONTEND_PORT:-5173}:${FRONTEND_PORT:-5173}"
+    volumes:
+      - ./frontend:/app       # bind mount — hot reload
+      - /app/node_modules     # anonymous volume — prevent host overwrite
+    networks:
+      - efootball_net
+
+# ─────────────────────────────────────────────────
+#  Named volumes
+# ─────────────────────────────────────────────────
+volumes:
+  mysql_data:
+
+# ─────────────────────────────────────────────────
+#  Networks
+# ─────────────────────────────────────────────────
+networks:
+  efootball_net:
+    driver: bridge

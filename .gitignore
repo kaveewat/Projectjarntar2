@@ -1,0 +1,54 @@
+# ============================================================
+#  .gitignore — eFootball Smart Marketplace & Squad Valuation
+# ============================================================
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Node / npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.vite/
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+
+# OS artefacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Docker local data
+mysql_data/
+.docker/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# File uploads & production assets
+uploads/
+backend/uploads/
+backend/public/
+

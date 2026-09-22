@@ -1,0 +1,133 @@
+/* =====================================================
+   PlayerCard.css — eFootball player card
+   Clean card styling letting eFootball CDN card art shine
+   ===================================================== */
+
+.player-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #141721;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+  user-select: none;
+  width: 100%;
+}
+
+.player-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 20px rgba(56, 189, 248, 0.25);
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+/* ── Image Area ── */
+.player-card__image-wrap {
+  position: relative;
+  aspect-ratio: 4 / 5.7;
+  overflow: hidden;
+  background: linear-gradient(160deg, #181d29, #0d1017);
+}
+
+.player-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.3s ease;
+}
+
+.player-card:hover .player-card__img {
+  transform: scale(1.05);
+}
+
+/* ── Placeholder (fallback) ── */
+.player-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1rem;
+}
+
+.player-card__placeholder-icon {
+  font-size: 2rem;
+  opacity: 0.5;
+}
+
+.player-card__placeholder-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── OVR + Position Badge (top-left) ── */
+.player-card__ovr-badge {
+  position: absolute;
+  top: 6%;
+  left: 6%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9), 0 0 4px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+.player-card__ovr {
+  font-size: clamp(1rem, 5cqi, 1.35rem);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.player-card__pos {
+  font-size: clamp(0.55rem, 2.5cqi, 0.7rem);
+  font-weight: 800;
+  color: #f1f5f9;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+/* ── Footer ── */
+.player-card__footer {
+  padding: 0.5rem 0.6rem;
+  background: #10131a;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.player-card__name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  text-align: center;
+}
+
+.player-card__club {
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  text-align: center;
+}

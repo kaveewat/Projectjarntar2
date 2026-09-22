@@ -1,0 +1,46 @@
+{
+  "name": "efootball-backend",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "description": "eFootball Smart Marketplace & Squad Valuation — Backend API",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "test:phase3": "node test-phase3.js",
+    "test:phase4": "node test-phase4.js",
+    "test:phase5": "node test-phase5.js",
+    "test:phase6": "node test-phase6.js",
+    "test:phase7": "node test-phase7.js",
+    "test:phase8": "node test-phase8.js",
+    "test:phase9": "node test-phase9.js",
+    "test:phase11": "node test-phase11.js",
+    "test:phase12": "node test-phase12.js",
+    "test:phase13": "node test-phase13.js",
+    "test:phase14": "node test-phase14.js",
+    "test:phase15": "node test-phase15.js",
+    "test:phase16": "node test-phase16.js",
+    "test:phase18": "node test-phase18.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cheerio": "^1.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.3.1",
+    "helmet": "^7.1.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.12.1",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.10.1",
+    "node-cron": "^3.0.3",
+    "node-fetch": "^2.7.0",
+    "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
