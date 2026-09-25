@@ -2,12 +2,14 @@ const { startPaymentTimeoutCron } = require('../jobs/order-payment-timeout.job')
 const { startHandoverSellerTimeoutCron } = require('../jobs/handover-seller-timeout.job');
 const { startBuyerAutoReleaseCron, stopBuyerAutoReleaseCron } = require('../jobs/buyer-auto-release.job');
 const { startDisputeSlaCron, stopDisputeSlaCron } = require('../jobs/dispute-sla.job');
+const { startPlayerSyncCron, stopPlayerSyncCron } = require('../jobs/sync-players.job');
 const logger = require('../utils/logger');
 
 let paymentCronTask = null;
 let handoverCronTask = null;
 let autoReleaseCronTask = null;
 let disputeSlaCronTask = null;
+let playerSyncCronTask = null;
 let isInitialized = false;
 
 /**
@@ -34,8 +36,11 @@ const initSchedulers = () => {
   // 4. Dispute SLA warning check (hourly)
   disputeSlaCronTask = startDisputeSlaCron();
 
+  // 5. eFootball cards auto-sync check (every 12 hours)
+  playerSyncCronTask = startPlayerSyncCron();
+
   isInitialized = true;
-  logger.info('✅ All 4 background schedulers active and registered.');
+  logger.info('✅ All 5 background schedulers active and registered.');
 };
 
 /**
@@ -52,6 +57,7 @@ const stopSchedulers = () => {
   }
   stopBuyerAutoReleaseCron();
   stopDisputeSlaCron();
+  stopPlayerSyncCron();
 
   isInitialized = false;
   logger.info('💤 Schedulers successfully terminated.');

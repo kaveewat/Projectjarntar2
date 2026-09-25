@@ -87,10 +87,27 @@ const getGames = async (_req, res, next) => {
   }
 };
 
+/**
+ * Trigger manual sync for latest player cards
+ * POST /api/v1/players/sync-latest
+ */
+const syncLatestCards = async (req, res, next) => {
+  try {
+    const limit = Number(req.query.limit) || 100;
+    const { syncLatestPlayers } = require('../services/player-sync.service');
+    const result = await syncLatestPlayers({ limit });
+    return sendSuccess(res, result, 'Player cards sync completed');
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   browsePlayers,
   getPlayerDetail,
   getTiers,
   getPositions,
   getGames,
+  syncLatestCards,
 };
+
