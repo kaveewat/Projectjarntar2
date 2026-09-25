@@ -118,7 +118,7 @@ async function fetchLatestEfhubIds() {
     logger.warn(`[PlayerSync] Error fetching /new-players: ${err.message}`);
   }
 
-  // 2. Fetch from homepage
+  // 2. Fetch from homepage (extract both links and player card images)
   try {
     const res = await fetch('https://efhub.com', {
       headers: { 'User-Agent': USER_AGENT },
@@ -129,6 +129,13 @@ async function fetchLatestEfhubIds() {
       $('a[href*="/players/"]').each((_, el) => {
         const href = $(el).attr('href');
         const match = href ? href.match(/\/players\/(\d+)/) : null;
+        if (match && match[1]) {
+          ids.add(match[1]);
+        }
+      });
+      $('img[src*="/images/player_cards/"]').each((_, el) => {
+        const src = $(el).attr('src');
+        const match = src ? src.match(/player_cards\/(\d+)_l\.png/) : null;
         if (match && match[1]) {
           ids.add(match[1]);
         }
