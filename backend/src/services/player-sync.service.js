@@ -1,16 +1,96 @@
 /**
  * player-sync.service.js
- * Automatically scrapes and syncs latest eFootball player cards from eFHUB.
+ * Automatically scrapes and syncs latest eFootball player cards from eFHUB (New Players & Weekly Packs).
  */
 
 const cheerio = require('cheerio');
+const dns = require('dns');
 const logger = require('../utils/logger');
 const db = require('../config/db');
+
+// Ensure IPv4 first to prevent timeout with Cloudflare/eFHUB
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 const CDN_BASE = 'https://efimg.com/efootballhub22/images/player_cards';
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Core packs to check for updates (National Teams Selection, POTW, Club Selections)
+const KNOWN_PACK_SLUGS = [
+  'national-teams-selection-10-sep-26',
+  'national-teams-selection-14-sep-26',
+  'national-teams-selection-17-sep-26',
+  'national-teams-selection-24-sep-26',
+  'national-teams-selection-6-aug-26',
+  'potw-10-sep-26',
+  'potw-17-sep-26',
+  'potw-24-sep-26',
+  'european-clubs-selection-14-sep-26',
+  'european-clubs-selection-24-sep-26',
+  'summer-transfer-10-sep-26',
+];
+
+/**
+ * Scrapes player cards directly from an eFHUB pack page
+ */
+async function fetchPackCards(slug) {
+  const url = `https://efhub.com/packs/${slug}`;
+  try {
+    const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT } });
+    if (!res.ok) {
+      return [];
+    }
+    const html = await res.text();
+    const $ = cheerio.load(html);
+    const players = [];
+
+    $('img[src*="/images/player_cards/"]').each((_, el) => {
+      const src = $(el).attr('src');
+      const alt = $(el).attr('alt') || '';
+      const m = src ? src.match(/player_cards\/(\d+)_l\.png/) : null;
+      if (!m) return;
+      const id = m[1];
+
+      const parent = $(el).closest('div').parent();
+      const spans = parent.find('span').map((_, s) => $(s).text().trim()).get();
+
+      let ovr = null;
+      let pos = 'CF';
+
+      for (const s of spans) {
+        if (/^\d{2,3}$/.test(s) && !ovr) {
+          ovr = parseInt(s, 10);
+        } else if (/^[A-Z]{2,3}$/.test(s)) {
+          pos = s;
+        }
+      }
+
+      if (id && alt && ovr) {
+        let tierSlug = 'normal';
+        if (ovr >= 95) tierSlug = 'big_time';
+        else if (ovr >= 88) tierSlug = 'epic';
+        else if (ovr >= 84) tierSlug = 'show_time';
+
+        players.push({
+          efhub_id: id,
+          player_name: alt,
+          overall_rating: Math.min(ovr, 120),
+          position_code: pos,
+          tier_slug: tierSlug,
+          image_url: src,
+        });
+      }
+    });
+
+    return players;
+  } catch (err) {
+    logger.warn(`[PlayerSync] Error fetching pack ${slug}: ${err.message}`);
+    return [];
+  }
+}
 
 /**
  * Fetch latest new player IDs from efhub.com/new-players and homepage
@@ -38,7 +118,7 @@ async function fetchLatestEfhubIds() {
     logger.warn(`[PlayerSync] Error fetching /new-players: ${err.message}`);
   }
 
-  // 2. Fetch from homepage (featured/packs)
+  // 2. Fetch from homepage
   try {
     const res = await fetch('https://efhub.com', {
       headers: { 'User-Agent': USER_AGENT },
@@ -62,7 +142,7 @@ async function fetchLatestEfhubIds() {
 }
 
 /**
- * Fetch and parse detailed player information for an ID
+ * Fetch and parse detailed player information for an individual ID
  */
 async function fetchPlayerData(efhubId) {
   const url = `https://efhub.com/en/players/${efhubId}`;
@@ -138,16 +218,16 @@ async function fetchPlayerData(efhubId) {
 }
 
 /**
- * Main Sync function: Scrapes new cards and inserts into DB
+ * Main Sync function: Scrapes new cards from packs and /new-players and inserts into DB
  * @param {Object} [options]
- * @param {Object} [options.dbClient] - Custom db instance (for TiDB direct script)
+ * @param {Object} [options.dbClient] - Custom db instance
  * @param {number} [options.limit] - Limit number of new cards to sync per run
  */
 async function syncLatestPlayers(options = {}) {
   const pool = options.dbClient || db;
   const limit = options.limit || 150;
 
-  logger.info('🔄 [PlayerSync] Starting automatic eFootball card synchronization...');
+  logger.info('🔄 [PlayerSync] Starting comprehensive eFootball card synchronization...');
 
   // 1. Load lookup tables (positions & tiers)
   const [positions] = await pool.query('SELECT id, code FROM positions');
@@ -166,60 +246,72 @@ async function syncLatestPlayers(options = {}) {
   const [existingCards] = await pool.query('SELECT efhub_id FROM player_cards WHERE efhub_id IS NOT NULL');
   const existingSet = new Set(existingCards.map((c) => String(c.efhub_id)));
 
-  // 3. Fetch latest IDs from efhub.com
-  const scrapedIds = await fetchLatestEfhubIds();
-  const missingIds = scrapedIds.filter((id) => !existingSet.has(String(id))).slice(0, limit);
+  const addedPlayers = [];
 
-  logger.info(`[PlayerSync] Found ${scrapedIds.length} cards from eFHUB. New cards to sync: ${missingIds.length}`);
+  // Helper to insert a card
+  async function insertCard(card) {
+    const posId = posMap[card.position_code] || posMap['CF'] || 10;
+    const tierId = tierMap[card.tier_slug] || tierMap['normal'] || 1;
 
-  if (missingIds.length === 0) {
-    logger.info('✅ [PlayerSync] All latest cards are already in the database.');
-    return { scanned: scrapedIds.length, added: 0, message: 'All latest cards are already up to date.' };
+    try {
+      await pool.query(
+        `INSERT INTO player_cards 
+          (game_id, card_tier_id, position_id, player_name, overall_rating, efhub_id, image_url, is_active, base_value)
+         VALUES 
+          (1, ?, ?, ?, ?, ?, ?, 1, 0)
+         ON DUPLICATE KEY UPDATE
+          overall_rating = VALUES(overall_rating),
+          image_url = VALUES(image_url),
+          is_active = 1`,
+        [tierId, posId, card.player_name, card.overall_rating, card.efhub_id, card.image_url]
+      );
+      existingSet.add(String(card.efhub_id));
+      addedPlayers.push(card);
+      logger.info(`[PlayerSync] Added: [${card.position_code}] ${card.player_name} (${card.overall_rating} OVR) - ID: ${card.efhub_id}`);
+    } catch (err) {
+      logger.warn(`[PlayerSync] Insert error for ${card.efhub_id}: ${err.message}`);
+    }
   }
 
-  // 4. Concurrently fetch and insert new cards (with rate limit delay)
-  const addedPlayers = [];
-  const CONCURRENCY = 4;
-  let index = 0;
-
-  async function worker() {
-    while (index < missingIds.length) {
-      const currentId = missingIds[index++];
-      await sleep(350); // Respectful request rate limit
-
-      const card = await fetchPlayerData(currentId);
-      if (!card) continue;
-
-      const posId = posMap[card.position_code] || posMap['CF'] || 10;
-      const tierId = tierMap[card.tier_slug] || tierMap['normal'] || 1;
-
-      try {
-        await pool.query(
-          `INSERT INTO player_cards 
-            (game_id, card_tier_id, position_id, player_name, overall_rating, efhub_id, image_url, is_active, base_value)
-           VALUES 
-            (1, ?, ?, ?, ?, ?, ?, 1, 0)
-           ON DUPLICATE KEY UPDATE
-            overall_rating = VALUES(overall_rating),
-            image_url = VALUES(image_url),
-            is_active = 1`,
-          [tierId, posId, card.player_name, card.overall_rating, card.efhub_id, card.image_url]
-        );
-        addedPlayers.push(card);
-        logger.info(`[PlayerSync] Added: [${card.position_code}] ${card.player_name} (${card.overall_rating} OVR) - ID: ${card.efhub_id}`);
-      } catch (err) {
-        logger.warn(`[PlayerSync] Insert error for ${card.efhub_id}: ${err.message}`);
+  // 3. Scan packs first (fast & reliable)
+  for (const slug of KNOWN_PACK_SLUGS) {
+    if (addedPlayers.length >= limit) break;
+    const packCards = await fetchPackCards(slug);
+    for (const card of packCards) {
+      if (!existingSet.has(String(card.efhub_id)) && addedPlayers.length < limit) {
+        await insertCard(card);
       }
     }
   }
 
-  const workers = Array.from({ length: CONCURRENCY }, () => worker());
-  await Promise.all(workers);
+  // 4. Fetch from /new-players for any standalone new cards
+  const scrapedIds = await fetchLatestEfhubIds();
+  const missingIds = scrapedIds.filter((id) => !existingSet.has(String(id))).slice(0, Math.max(0, limit - addedPlayers.length));
 
-  logger.info(`🎉 [PlayerSync] Successfully synced ${addedPlayers.length} new player cards!`);
+  if (missingIds.length > 0) {
+    const CONCURRENCY = 3;
+    let index = 0;
+
+    async function worker() {
+      while (index < missingIds.length && addedPlayers.length < limit) {
+        const currentId = missingIds[index++];
+        await sleep(350);
+
+        const card = await fetchPlayerData(currentId);
+        if (card && !existingSet.has(String(card.efhub_id))) {
+          await insertCard(card);
+        }
+      }
+    }
+
+    const workers = Array.from({ length: CONCURRENCY }, () => worker());
+    await Promise.all(workers);
+  }
+
+  logger.info(`🎉 [PlayerSync] Finished sync. Added ${addedPlayers.length} new player cards.`);
 
   return {
-    scanned: scrapedIds.length,
+    scanned: scrapedIds.length + KNOWN_PACK_SLUGS.length,
     added: addedPlayers.length,
     players: addedPlayers.map((p) => ({
       name: p.player_name,
@@ -234,4 +326,6 @@ module.exports = {
   syncLatestPlayers,
   fetchLatestEfhubIds,
   fetchPlayerData,
+  fetchPackCards,
+  KNOWN_PACK_SLUGS,
 };
