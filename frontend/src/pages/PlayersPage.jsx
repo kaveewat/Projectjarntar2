@@ -15,6 +15,8 @@ export default function PlayersPage() {
   // Filters
   const [search, setSearch]         = useState('');
   const [position, setPosition]     = useState('');
+  const [tier, setTier]             = useState('');
+  const [sort, setSort]             = useState('tier_priority');
   const [page, setPage]             = useState(1);
 
   // Debounce search
@@ -32,7 +34,16 @@ export default function PlayersPage() {
   };
 
   const handlePositionChange = (e) => { setPosition(e.target.value); setPage(1); };
-  const handleClearFilters   = () => { setSearch(''); setDebouncedSearch(''); setPosition(''); setPage(1); };
+  const handleTierChange     = (e) => { setTier(e.target.value); setPage(1); };
+  const handleSortChange     = (e) => { setSort(e.target.value); setPage(1); };
+  const handleClearFilters   = () => {
+    setSearch('');
+    setDebouncedSearch('');
+    setPosition('');
+    setTier('');
+    setSort('tier_priority');
+    setPage(1);
+  };
 
   const fetchPlayers = useCallback(async () => {
     setLoading(true);
@@ -41,9 +52,11 @@ export default function PlayersPage() {
       const params = {
         limit: PAGE_SIZE,
         page,
+        sort,
       };
       if (debouncedSearch) params.name     = debouncedSearch;
       if (position)        params.position = position;
+      if (tier)            params.tier     = tier;
 
       const res = await api.get('/players', { params });
       // Backend returns { success, data: [...], meta: { total, ... } }
@@ -62,12 +75,12 @@ export default function PlayersPage() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, position, page]);
+  }, [debouncedSearch, position, tier, sort, page]);
 
   useEffect(() => { fetchPlayers(); }, [fetchPlayers]);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
-  const hasFilters = debouncedSearch || position;
+  const hasFilters = debouncedSearch || position || tier || sort !== 'tier_priority';
 
   return (
     <div className="players-page">
@@ -93,7 +106,7 @@ export default function PlayersPage() {
             id="players-search"
             type="search"
             className="players-filter__search"
-            placeholder="ค้นหาชื่อนักเตะ... เช่น Messi, Ronaldo"
+            placeholder="ค้นหาชื่อนักเตะ... เช่น Messi, Del Piero, Bale"
             value={search}
             onChange={handleSearchChange}
           />
@@ -110,6 +123,34 @@ export default function PlayersPage() {
           {POSITIONS.map(p => (
             <option key={p} value={p}>{p}</option>
           ))}
+        </select>
+
+        {/* Card Tier filter */}
+        <select
+          id="players-tier-filter"
+          className="players-filter__select"
+          value={tier}
+          onChange={handleTierChange}
+        >
+          <option value="">ทุกประเภทการ์ด</option>
+          <option value="big_time">🔴 Big Time</option>
+          <option value="epic">🟡 Epic</option>
+          <option value="show_time">🔵 Show Time / Featured</option>
+          <option value="normal">⚪ Normal</option>
+        </select>
+
+        {/* Sort order select */}
+        <select
+          id="players-sort-select"
+          className="players-filter__select"
+          value={sort}
+          onChange={handleSortChange}
+        >
+          <option value="tier_priority">⭐ จัดเรียง: การ์ดใหม่ & Big Time → Epic → Featured</option>
+          <option value="newest">🕒 การ์ดเข้าใหม่ล่าสุด</option>
+          <option value="ovr_desc">📈 OVR สูงสุด</option>
+          <option value="ovr_asc">📉 OVR ต่ำสุด</option>
+          <option value="name_asc">🔤 ชื่อ A-Z</option>
         </select>
 
         {/* Clear */}

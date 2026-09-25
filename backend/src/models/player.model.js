@@ -23,6 +23,7 @@ const findAll = async ({
   tier = null,
   position = null,
   game_id = null,
+  sort = 'tier_priority',
   limit = 20,
   offset = 0,
 }) => {
@@ -68,6 +69,29 @@ const findAll = async ({
   const [countRows] = await db.query(countSql, params);
   const total = countRows[0] ? countRows[0].total : 0;
 
+  // Determine sort order
+  let orderByClause = `
+    ORDER BY 
+      CASE 
+        WHEN ct.slug = 'big_time' THEN 1
+        WHEN ct.slug = 'epic' THEN 2
+        WHEN ct.slug = 'show_time' THEN 3
+        ELSE 4
+      END ASC,
+      pc.efhub_id DESC,
+      pc.overall_rating DESC
+  `;
+
+  if (sort === 'newest') {
+    orderByClause = 'ORDER BY pc.efhub_id DESC, pc.id DESC';
+  } else if (sort === 'ovr_desc') {
+    orderByClause = 'ORDER BY pc.overall_rating DESC, pc.efhub_id DESC';
+  } else if (sort === 'ovr_asc') {
+    orderByClause = 'ORDER BY pc.overall_rating ASC, pc.efhub_id DESC';
+  } else if (sort === 'name_asc') {
+    orderByClause = 'ORDER BY pc.player_name ASC';
+  }
+
   // Get paginated rows
   const queryParams = [...params, Number(limit), Number(offset)];
   const dataSql = `
@@ -81,7 +105,7 @@ const findAll = async ({
     LEFT JOIN positions pos ON pc.position_id = pos.id
     LEFT JOIN games g ON pc.game_id = g.id
     ${whereClause}
-    ORDER BY pc.overall_rating DESC, pc.player_name ASC
+    ${orderByClause}
     LIMIT ? OFFSET ?
   `;
   const [rows] = await db.query(dataSql, queryParams);
