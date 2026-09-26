@@ -14,6 +14,24 @@ const resolveImageUrl = (image_url, efhub_id) => {
   return null;
 };
 
+const { LEGEND_NAMES } = require('../services/card-tier-fixer.service');
+
+/**
+ * Check if player card is a Double Booster (2 Boosters) card.
+ * Epic and Big Time cards in eFootball 2025/2026 are Double Boosters.
+ */
+const isDoubleBooster = (player) => {
+  if (!player) return false;
+  const tier = String(player.tier_slug || '').toLowerCase();
+  if (['epic', 'big_time', 'big-time', 'bigtime'].includes(tier)) return true;
+  if ([2, 4].includes(Number(player.card_tier_id))) return true;
+  const name = String(player.player_name || '').toLowerCase();
+  if (LEGEND_NAMES && Array.isArray(LEGEND_NAMES)) {
+    if (LEGEND_NAMES.some((leg) => name.includes(leg.toLowerCase()))) return true;
+  }
+  return false;
+};
+
 /**
  * Find player cards with filters and pagination
  * @param {object} param0
@@ -23,6 +41,8 @@ const findAll = async ({
   tier = null,
   position = null,
   game_id = null,
+  booster = null,
+  double_booster = null,
   sort = 'newest',
   limit = 20,
   offset = 0,
@@ -36,9 +56,20 @@ const findAll = async ({
   ];
   const params = [];
 
+  // 2-Booster (Double Booster) filter
+  if (booster === '2' || booster === 'double' || double_booster === 'true' || double_booster === true) {
+    conditions.push("(ct.slug IN ('epic', 'big_time', 'big-time', 'bigtime') OR pc.card_tier_id IN (2, 4))");
+  }
+
   if (name) {
-    conditions.push('pc.player_name LIKE ?');
-    params.push(`%${name.trim()}%`);
+    const trimmed = name.trim();
+    // If user searches for "2 boost", "booster", or "ดับเบิ้ลบูสต์", treat as booster filter
+    if (/^(2\s*boost|double\s*boost|booster|บูสต์|2\s*บูสต์|2boost|doublebooster)$/i.test(trimmed)) {
+      conditions.push("(ct.slug IN ('epic', 'big_time', 'big-time', 'bigtime') OR pc.card_tier_id IN (2, 4))");
+    } else {
+      conditions.push('pc.player_name LIKE ?');
+      params.push(`%${trimmed}%`);
+    }
   }
 
   if (tier) {
@@ -127,11 +158,16 @@ const findAll = async ({
   const [rows] = await db.query(dataSql, queryParams);
 
   return {
-    players: rows.map((r) => ({
-      ...r,
-      base_value: Number(r.base_value),
-      image_url: resolveImageUrl(r.image_url, r.efhub_id),
-    })),
+    players: rows.map((r) => {
+      const isDual = isDoubleBooster(r);
+      return {
+        ...r,
+        base_value: Number(r.base_value),
+        image_url: resolveImageUrl(r.image_url, r.efhub_id),
+        is_double_booster: isDual,
+        booster_count: isDual ? 2 : 0,
+      };
+    }),
     total,
   };
 };
@@ -160,10 +196,15 @@ const findById = async (id, includeInactive = true) => {
   const [rows] = await db.query(sql, [id]);
   if (!rows || rows.length === 0) return null;
 
+  const player = rows[0];
+  const isDual = isDoubleBooster(player);
+
   return {
-    ...rows[0],
-    base_value: Number(rows[0].base_value),
-    image_url: resolveImageUrl(rows[0].image_url, rows[0].efhub_id),
+    ...player,
+    base_value: Number(player.base_value),
+    image_url: resolveImageUrl(player.image_url, player.efhub_id),
+    is_double_booster: isDual,
+    booster_count: isDual ? 2 : 0,
   };
 };
 

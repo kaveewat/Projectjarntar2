@@ -146,6 +146,7 @@ const findById = async (id) => {
 const findAll = async ({
   status = 'ACTIVE',
   player_name = null,
+  has_double_booster = null,
   min_price = null,
   max_price = null,
   min_strength = null,
@@ -206,14 +207,34 @@ const findAll = async ({
     params.push(Number(max_strength));
   }
 
-  // Filter by player name contained in listing
-  if (player_name) {
+  // Filter for Double Booster accounts
+  if (has_double_booster === 'true' || has_double_booster === true || has_double_booster === '1') {
     conditions.push(`EXISTS (
       SELECT 1 FROM listing_player_cards lpc
       JOIN player_cards pc ON lpc.player_card_id = pc.id
-      WHERE lpc.listing_id = l.id AND pc.player_name LIKE ?
+      LEFT JOIN card_tiers ct ON pc.card_tier_id = ct.id
+      WHERE lpc.listing_id = l.id AND (ct.slug IN ('epic', 'big_time', 'big-time', 'bigtime') OR pc.card_tier_id IN (2, 4))
     )`);
-    params.push(`%${player_name.trim()}%`);
+  }
+
+  // Filter by player name contained in listing
+  if (player_name) {
+    const trimmed = player_name.trim();
+    if (/^(2\s*boost|double\s*boost|booster|บูสต์|2\s*บูสต์|2boost|doublebooster)$/i.test(trimmed)) {
+      conditions.push(`EXISTS (
+        SELECT 1 FROM listing_player_cards lpc
+        JOIN player_cards pc ON lpc.player_card_id = pc.id
+        LEFT JOIN card_tiers ct ON pc.card_tier_id = ct.id
+        WHERE lpc.listing_id = l.id AND (ct.slug IN ('epic', 'big_time', 'big-time', 'bigtime') OR pc.card_tier_id IN (2, 4))
+      )`);
+    } else {
+      conditions.push(`EXISTS (
+        SELECT 1 FROM listing_player_cards lpc
+        JOIN player_cards pc ON lpc.player_card_id = pc.id
+        WHERE lpc.listing_id = l.id AND pc.player_name LIKE ?
+      )`);
+      params.push(`%${trimmed}%`);
+    }
   }
 
   const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -243,6 +264,13 @@ const findAll = async ({
            p.name AS platform_name, p.slug AS platform_slug,
            g.name AS game_name,
            COALESCE(l.image_urls, sc.image_urls) AS squad_images,
+           (
+             SELECT COUNT(*)
+             FROM listing_player_cards lpc
+             JOIN player_cards pc ON lpc.player_card_id = pc.id
+             LEFT JOIN card_tiers ct ON pc.card_tier_id = ct.id
+             WHERE lpc.listing_id = l.id AND (ct.slug IN ('epic', 'big_time', 'big-time', 'bigtime') OR pc.card_tier_id IN (2, 4))
+           ) > 0 AS has_double_booster,
            (
              SELECT GROUP_CONCAT(pc.player_name ORDER BY pc.overall_rating DESC SEPARATOR ', ')
              FROM listing_player_cards lpc
@@ -274,6 +302,7 @@ const findAll = async ({
       asking_price: Number(r.asking_price),
       fair_price_min: r.fair_price_min !== null ? Number(r.fair_price_min) : null,
       fair_price_max: r.fair_price_max !== null ? Number(r.fair_price_max) : null,
+      has_double_booster: Boolean(r.has_double_booster),
       squad_images,
     };
   });

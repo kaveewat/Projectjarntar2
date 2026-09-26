@@ -508,7 +508,7 @@ export default function CreateListingPage() {
                             >
                               {player.player_name || player.name}
                             </Typography>
-                            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+                            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', flexWrap: 'wrap' }}>
                               <Chip
                                 label={player.position_code || player.position || 'POS'}
                                 size="small"
@@ -524,6 +524,20 @@ export default function CreateListingPage() {
                               <Typography variant="caption" fontWeight={800} color="#3FB950">
                                 {player.overall_rating}
                               </Typography>
+                              {player.is_double_booster && (
+                                <Chip
+                                  label="⚡ 2 Boost"
+                                  size="small"
+                                  sx={{
+                                    height: 16,
+                                    fontSize: '0.6rem',
+                                    fontWeight: 800,
+                                    bgcolor: 'rgba(245, 158, 11, 0.2)',
+                                    color: '#FBBF24',
+                                    border: '1px solid rgba(245, 158, 11, 0.5)',
+                                  }}
+                                />
+                              )}
                             </Box>
                           </Box>
                           <IconButton
@@ -541,10 +555,53 @@ export default function CreateListingPage() {
               </Box>
             )}
 
+            {/* Quick 2-Booster meta player suggestions */}
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.8 }}>
+                ⚡ แนะนำ: ค้นหาการ์ด 2 บูสต์ยอดนิยม (Double Boosters) ที่ผู้ซื้อต้องการสูง:
+              </Typography>
+              <Stack direction="row" spacing={0.8} flexWrap="wrap" useFlexGap sx={{ gap: 0.8 }}>
+                {[
+                  { label: '⚡ การ์ด 2 บูสต์ทั้งหมด', query: '2 boost' },
+                  { label: '⚡ Chiellini', query: 'Chiellini' },
+                  { label: '⚡ Bonucci', query: 'Bonucci' },
+                  { label: '⚡ De Rossi', query: 'De Rossi' },
+                  { label: '⚡ Bale', query: 'Bale' },
+                  { label: '⚡ Gullit', query: 'Gullit' },
+                  { label: '⚡ Messi', query: 'Messi' },
+                  { label: '⚡ Ronaldinho', query: 'Ronaldinho' },
+                  { label: '⚡ Shevchenko', query: 'Shevchenko' },
+                  { label: '⚡ Vieira', query: 'Vieira' },
+                ].map((item, idx) => (
+                  <Chip
+                    key={idx}
+                    label={item.label}
+                    size="small"
+                    clickable
+                    onClick={() => {
+                      setPlayerSearch(item.query);
+                      setDebouncedSearch(item.query);
+                    }}
+                    sx={{
+                      bgcolor: item.query === '2 boost' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.06)',
+                      border: item.query === '2 boost' ? '1px solid rgba(245, 158, 11, 0.6)' : '1px solid rgba(255, 255, 255, 0.15)',
+                      color: item.query === '2 boost' ? '#FBBF24' : '#F0F6FC',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      '&:hover': {
+                        bgcolor: 'rgba(245, 158, 11, 0.3)',
+                        borderColor: '#F59E0B',
+                      },
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Box>
+
             {/* Search Input */}
             <TextField
               fullWidth
-              placeholder="พิมพ์ชื่อนักเตะเพื่อค้นหา (เช่น Gullit, Messi, Rummenigge, Vieira, Cruijff)..."
+              placeholder="พิมพ์ชื่อนักเตะเพื่อค้นหา (เช่น Chiellini, Bale, Gullit, Messi) หรือ '2 boost'..."
               value={playerSearch}
               onChange={handlePlayerSearchChange}
               InputProps={{
@@ -632,7 +689,7 @@ export default function CreateListingPage() {
                           >
                             {player.player_name || player.name}
                           </Typography>
-                          <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', mt: 0.3 }}>
+                          <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', mt: 0.3, flexWrap: 'wrap', justifyContent: 'center' }}>
                             <Chip
                               label={player.position_code || player.position || 'POS'}
                               size="small"
@@ -647,6 +704,20 @@ export default function CreateListingPage() {
                             <Typography variant="caption" fontWeight={800} color="#3FB950">
                               {player.overall_rating}
                             </Typography>
+                            {player.is_double_booster && (
+                              <Chip
+                                label="⚡ 2 Boost"
+                                size="small"
+                                sx={{
+                                  height: 16,
+                                  fontSize: '0.6rem',
+                                  fontWeight: 800,
+                                  bgcolor: 'rgba(245, 158, 11, 0.2)',
+                                  color: '#FBBF24',
+                                  border: '1px solid rgba(245, 158, 11, 0.5)',
+                                }}
+                              />
+                            )}
                           </Box>
                         </Box>
                       </Grid>

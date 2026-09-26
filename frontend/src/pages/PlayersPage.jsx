@@ -12,9 +12,10 @@ export default function PlayersPage() {
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
 
-  // Search Filter
+  // Search & Booster Filter
   const [search, setSearch]                 = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [boosterFilter, setBoosterFilter]   = useState('all'); // 'all' | '2'
   const [page, setPage]                     = useState(1);
   const searchTimer                         = useRef(null);
 
@@ -28,9 +29,15 @@ export default function PlayersPage() {
     }, 350);
   };
 
+  const handleBoosterFilterChange = (val) => {
+    setBoosterFilter(val);
+    setPage(1);
+  };
+
   const handleClearFilters = () => {
     setSearch('');
     setDebouncedSearch('');
+    setBoosterFilter('all');
     setPage(1);
   };
 
@@ -44,6 +51,7 @@ export default function PlayersPage() {
         sort: 'newest', // เรียงจากการ์ดใหม่ล่าสุด -> เก่า ตาม eFHUB
       };
       if (debouncedSearch) params.name = debouncedSearch;
+      if (boosterFilter === '2') params.booster = '2';
 
       const res = await api.get('/players', { params });
       if (res.data?.success && Array.isArray(res.data.data)) {
@@ -61,12 +69,12 @@ export default function PlayersPage() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, page]);
+  }, [debouncedSearch, boosterFilter, page]);
 
   useEffect(() => { fetchPlayers(); }, [fetchPlayers]);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
-  const hasFilters = Boolean(debouncedSearch);
+  const hasFilters = Boolean(debouncedSearch || boosterFilter !== 'all');
 
   return (
     <div className="players-page">
@@ -83,7 +91,7 @@ export default function PlayersPage() {
         </div>
       </div>
 
-      {/* ── Filter Bar: ค้นหาชื่อนักเตะ ── */}
+      {/* ── Filter Bar: ค้นหาชื่อนักเตะ & แท็ก 2 บูสต์ ── */}
       <div className="players-page__filters">
         <div className="players-filter__search-wrap players-filter__search-wrap--wide">
           <span className="players-filter__search-icon">🔍</span>
@@ -91,11 +99,29 @@ export default function PlayersPage() {
             id="players-search"
             type="search"
             className="players-filter__search"
-            placeholder="ค้นหาชื่อนักเตะ... เช่น Messi, Bale, Del Piero, Mbappe, Haaland"
+            placeholder="ค้นหาชื่อนักเตะ... เช่น Messi, Bale, Del Piero, Mbappe หรือพิมพ์ '2 boost'"
             value={search}
             onChange={handleSearchChange}
             autoComplete="off"
           />
+        </div>
+
+        {/* 2-Booster / All Cards Quick Toggle */}
+        <div className="players-filter__booster-toggles">
+          <button
+            type="button"
+            className={`players-filter__toggle-btn ${boosterFilter === 'all' ? 'active' : ''}`}
+            onClick={() => handleBoosterFilterChange('all')}
+          >
+            📋 การ์ดทั้งหมด
+          </button>
+          <button
+            type="button"
+            className={`players-filter__toggle-btn players-filter__toggle-btn--booster ${boosterFilter === '2' ? 'active' : ''}`}
+            onClick={() => handleBoosterFilterChange('2')}
+          >
+            ⚡ การ์ด 2 บูสต์ (Double Booster)
+          </button>
         </div>
 
         {hasFilters && (

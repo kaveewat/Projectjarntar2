@@ -17,6 +17,7 @@ const browseListings = async (req, res, next) => {
 
     const {
       player_name,
+      has_double_booster,
       min_price,
       max_price,
       min_strength,
@@ -30,6 +31,7 @@ const browseListings = async (req, res, next) => {
     const { listings, total } = await listingModel.findAll({
       status: 'ACTIVE',
       player_name,
+      has_double_booster,
       min_price,
       max_price,
       min_strength,

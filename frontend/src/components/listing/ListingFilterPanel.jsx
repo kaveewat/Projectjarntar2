@@ -138,6 +138,36 @@ export default function ListingFilterPanel({
         >
           ค้นหา
         </Button>
+
+        {/* 2-Booster Quick Filter */}
+        <Box sx={{ mt: 1.5 }}>
+          <Chip
+            label="⚡ มีการ์ด 2 บูสต์ (Double Booster)"
+            size="small"
+            clickable
+            variant={filters.has_double_booster ? 'filled' : 'outlined'}
+            onClick={() =>
+              onFilterChange({
+                has_double_booster: filters.has_double_booster ? undefined : 'true',
+              })
+            }
+            sx={{
+              width: '100%',
+              justifyContent: 'center',
+              py: 2,
+              fontWeight: 700,
+              fontSize: '0.78rem',
+              bgcolor: filters.has_double_booster ? 'rgba(245, 158, 11, 0.25)' : 'rgba(255, 255, 255, 0.03)',
+              borderColor: filters.has_double_booster ? '#F59E0B' : 'rgba(245, 158, 11, 0.45)',
+              color: filters.has_double_booster ? '#FBBF24' : '#F59E0B',
+              boxShadow: filters.has_double_booster ? '0 0 12px rgba(245, 158, 11, 0.3)' : 'none',
+              '&:hover': {
+                bgcolor: 'rgba(245, 158, 11, 0.2)',
+                borderColor: '#F59E0B',
+              },
+            }}
+          />
+        </Box>
       </Box>
 
       {/* 2. Value-for-Money Badges */}

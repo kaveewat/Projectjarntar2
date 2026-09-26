@@ -170,6 +170,61 @@
   border-color: rgba(239,68,68,0.7);
 }
 
+/* ── 2-Booster Filter Toggles ── */
+.players-filter__booster-toggles {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.players-filter__toggle-btn {
+  padding: 0.55rem 0.95rem;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.players-filter__toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.players-filter__toggle-btn.active {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: #6366f1;
+  color: #a5b4fc;
+}
+
+.players-filter__toggle-btn--booster {
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+
+.players-filter__toggle-btn--booster:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.6);
+  color: #fde68a;
+}
+
+.players-filter__toggle-btn--booster.active {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.35));
+  border-color: #f59e0b;
+  color: #fef08a;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.3);
+}
+
 /* ── Body ── */
 .players-page__body {
   max-width: 1200px;

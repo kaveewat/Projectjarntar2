@@ -13,7 +13,7 @@ export default function PlayerCard({ player, onClick }) {
 
   return (
     <div
-      className="player-card"
+      className={`player-card ${player.is_double_booster ? 'player-card--double-booster' : ''}`}
       onClick={handleClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -41,6 +41,14 @@ export default function PlayerCard({ player, onClick }) {
           <span className="player-card__ovr">{player.overall_rating}</span>
           <span className="player-card__pos">{player.position_code}</span>
         </div>
+
+        {/* 2-Booster Badge (top-right) */}
+        {player.is_double_booster && (
+          <div className="player-card__booster-badge" title="การ์ด 2 บูสต์ (Double Booster)">
+            <span className="player-card__booster-icon">⚡</span>
+            <span className="player-card__booster-text">2 BOOST</span>
+          </div>
+        )}
       </div>
 
       {/* Card Footer */}

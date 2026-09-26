@@ -56,6 +56,7 @@ export default function ListingCard({ listing }) {
     platform_slug,
     squad_images,
     featured_players,
+    has_double_booster,
     view_count = 0,
     status = 'ACTIVE',
   } = listing;
@@ -160,6 +161,22 @@ export default function ListingCard({ listing }) {
 
           {/* Right Badges */}
           <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+            {has_double_booster && (
+              <Chip
+                label="⚡ 2 BOOSTERS"
+                size="small"
+                sx={{
+                  bgcolor: 'rgba(245, 158, 11, 0.25)',
+                  border: '1px solid rgba(245, 158, 11, 0.8)',
+                  color: '#FBBF24',
+                  fontWeight: 900,
+                  fontSize: '0.65rem',
+                  height: 22,
+                  boxShadow: '0 0 10px rgba(245, 158, 11, 0.35)',
+                  letterSpacing: '0.04em',
+                }}
+              />
+            )}
             {status === 'RESERVED' && (
               <Chip
                 label="RESERVED"

@@ -40,6 +40,7 @@ export default function MarketplacePage() {
   // Parse filters from URL search params
   const [filters, setFilters] = useState({
     player_name: searchParams.get('player_name') || '',
+    has_double_booster: searchParams.get('has_double_booster') || '',
     min_price: searchParams.get('min_price') || '',
     max_price: searchParams.get('max_price') || '',
     min_strength: searchParams.get('min_strength') || '',
@@ -115,6 +116,7 @@ export default function MarketplacePage() {
   const handleResetFilters = () => {
     const defaultFilters = {
       player_name: '',
+      has_double_booster: '',
       min_price: '',
       max_price: '',
       min_strength: '',
@@ -220,6 +222,20 @@ export default function MarketplacePage() {
                 removeFilter('max_price');
               }}
               variant="outlined"
+            />
+          )}
+
+          {filters.has_double_booster && (
+            <Chip
+              label="⚡ มีการ์ด 2 บูสต์"
+              size="small"
+              onDelete={() => removeFilter('has_double_booster')}
+              sx={{
+                bgcolor: 'rgba(245, 158, 11, 0.2)',
+                border: '1px solid rgba(245, 158, 11, 0.6)',
+                color: '#FBBF24',
+                fontWeight: 700,
+              }}
             />
           )}
 
