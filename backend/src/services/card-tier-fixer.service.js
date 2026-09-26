@@ -13,24 +13,25 @@ const db = require('../config/db');
 const logger = require('../utils/logger');
 
 // Known Legendary / Epic player names (case-insensitive substring match)
+// Known Legendary / Epic player names (case-insensitive substring match)
 const LEGEND_NAMES = [
-  'Bale', 'Gullit', 'Best', 'Cantona', 'Van der Sar', 'Puyol', 'Rosicky',
-  'Cruyff', 'Maldini', 'Beckenbauer', 'Ronaldinho', 'Zico', 'Kaka', 'Platini',
-  'Pele', 'Maradona', 'Pirlo', 'Nesta', 'Rijkaard', 'Drogba', 'Bergkamp',
-  'Vieira', 'Scholes', 'Beckham', 'Roberto Carlos', 'Cafu', 'Romario',
-  'Shevchenko', 'Xabi Alonso', 'Xavi', 'Iniesta', 'Casillas', 'Kahn',
-  'Schmeichel', 'Cech', 'Gerrard', 'Lampard', 'Seedorf', 'Torres', 'Owen',
-  'Rooney', 'Van Persie', 'Robben', 'Ribery', 'Cannavaro', 'Baresi',
-  'Matthaus', 'Rummenigge', 'Van Basten', 'Van Nistelrooy', 'Batistuta',
-  'Rivaldo', 'Baggio', 'Nedved', 'Deco', 'Guti', 'Morientes', 'Raul',
-  'Makelele', 'Kluivert', 'Davids', 'Gascoigne', 'Lineker', 'Robson',
-  'Irwin', 'Campbell', 'Pires', 'Petit', 'Ljungberg', 'Gilberto Silva',
-  'Chiellini', 'Bonucci', 'De Rossi', 'Forlan', 'Figo', 'Eto\'o', 'Guardiola',
-  'Albertini', 'Ambrosini', 'Serginho', 'Costacurta', 'Dida', 'Abbiati',
-  'Inzaghi', 'Crespo', 'Veron', 'Zanetti', 'Cambiasso', 'Milito', 'Samuel',
-  'Stankovic', 'Cordoba', 'Julio Cesar', 'Adriano', 'Recoba', 'Chivu',
-  'Materazzi', 'Toldo', 'Zoff', 'Gentile', 'Scirea', 'Tardelli', 'Cabrini',
-  'Rossi', 'Boniek', 'Platini', 'Sivori', 'Charles', 'Boniperti', 'Buffon'
+  'Gareth Bale', 'Ruud Gullit', 'George Best', 'Eric Cantona', 'Edwin van der Sar', 'Carles Puyol', 'Tomas Rosicky',
+  'Johan Cruyff', 'Paolo Maldini', 'Franz Beckenbauer', 'Ronaldinho', 'Zico', 'Kaka', 'Michel Platini',
+  'Pele', 'Diego Maradona', 'Andrea Pirlo', 'Alessandro Nesta', 'Frank Rijkaard', 'Didier Drogba', 'Dennis Bergkamp',
+  'Patrick Vieira', 'Paul Scholes', 'David Beckham', 'Roberto Carlos', 'Cafu', 'Romario',
+  'Andriy Shevchenko', 'Xabi Alonso', 'Xavi', 'Andres Iniesta', 'Iker Casillas', 'Oliver Kahn',
+  'Peter Schmeichel', 'Petr Cech', 'Steven Gerrard', 'Frank Lampard', 'Clarence Seedorf', 'Fernando Torres', 'Michael Owen',
+  'Wayne Rooney', 'Robin van Persie', 'Arjen Robben', 'Franck Ribery', 'Fabio Cannavaro', 'Franco Baresi',
+  'Lothar Matthaus', 'Karl-Heinz Rummenigge', 'Marco van Basten', 'Ruud van Nistelrooy', 'Gabriel Batistuta',
+  'Rivaldo', 'Roberto Baggio', 'Pavel Nedved', 'Deco', 'Guti', 'Fernando Morientes', 'Raul',
+  'Claude Makelele', 'Patrick Kluivert', 'Edgar Davids', 'Paul Gascoigne', 'Gary Lineker', 'Bryan Robson',
+  'Denis Irwin', 'Sol Campbell', 'Robert Pires', 'Emmanuel Petit', 'Freddie Ljungberg', 'Gilberto Silva',
+  'Giorgio Chiellini', 'Leonardo Bonucci', 'Daniele De Rossi', 'Diego Forlan', 'Luis Figo', 'Samuel Eto\'o', 'Pep Guardiola',
+  'Demetrio Albertini', 'Massimo Ambrosini', 'Serginho', 'Alessandro Costacurta', 'Dida', 'Christian Abbiati',
+  'Filippo Inzaghi', 'Hernan Crespo', 'Juan Sebastian Veron', 'Javier Zanetti', 'Esteban Cambiasso', 'Diego Milito', 'Walter Samuel',
+  'Dejan Stankovic', 'Ivan Cordoba', 'Julio Cesar', 'Alvaro Recoba', 'Cristian Chivu',
+  'Marco Materazzi', 'Francesco Toldo', 'Dino Zoff', 'Claudio Gentile', 'Gaetano Scirea', 'Marco Tardelli', 'Antonio Cabrini',
+  'Paolo Rossi', 'Zbigniew Boniek', 'Omar Sivori', 'John Charles', 'Giampiero Boniperti', 'Gianluigi Buffon'
 ];
 
 // Explicit Big Time efhub IDs or player signatures
@@ -108,7 +109,11 @@ async function fixCardTiers() {
     }
 
     // 5. Also move modern active players currently wrongly in Epic (2) into Highlight (5)
-    for (const name of modernStars) {
+    const nonLegendInEpic = [
+      'Manuel Neuer', 'Ferran Torres', 'Charles De Ketelaere', 'Filip Stankovic', 'Jhon Cordoba',
+      'Lionel Messi', 'Cristiano Ronaldo' // non-Big Time Messi/Ronaldo are Highlight/Featured
+    ];
+    for (const name of [...modernStars, ...nonLegendInEpic]) {
       await db.query(
         `UPDATE player_cards 
          SET card_tier_id = 5 
