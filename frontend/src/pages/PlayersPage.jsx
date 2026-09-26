@@ -12,16 +12,11 @@ export default function PlayersPage() {
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
 
-  // Filters
-  const [search, setSearch]         = useState('');
-  const [position, setPosition]     = useState('');
-  const [tier, setTier]             = useState('');
-  const [sort, setSort]             = useState('tier_priority');
-  const [page, setPage]             = useState(1);
-
-  // Debounce search
-  const searchTimer = useRef(null);
+  // Search Filter
+  const [search, setSearch]                 = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage]                     = useState(1);
+  const searchTimer                         = useRef(null);
 
   const handleSearchChange = (e) => {
     const val = e.target.value;
@@ -33,15 +28,9 @@ export default function PlayersPage() {
     }, 350);
   };
 
-  const handlePositionChange = (e) => { setPosition(e.target.value); setPage(1); };
-  const handleTierChange     = (e) => { setTier(e.target.value); setPage(1); };
-  const handleSortChange     = (e) => { setSort(e.target.value); setPage(1); };
-  const handleClearFilters   = () => {
+  const handleClearFilters = () => {
     setSearch('');
     setDebouncedSearch('');
-    setPosition('');
-    setTier('');
-    setSort('tier_priority');
     setPage(1);
   };
 
@@ -52,14 +41,11 @@ export default function PlayersPage() {
       const params = {
         limit: PAGE_SIZE,
         page,
-        sort,
+        sort: 'newest', // เรียงจากการ์ดใหม่ล่าสุด -> เก่า ตาม eFHUB
       };
-      if (debouncedSearch) params.name     = debouncedSearch;
-      if (position)        params.position = position;
-      if (tier)            params.tier     = tier;
+      if (debouncedSearch) params.name = debouncedSearch;
 
       const res = await api.get('/players', { params });
-      // Backend returns { success, data: [...], meta: { total, ... } }
       if (res.data?.success && Array.isArray(res.data.data)) {
         setPlayers(res.data.data);
         setTotal(res.data.meta?.total || res.data.data.length);
@@ -75,12 +61,12 @@ export default function PlayersPage() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, position, tier, sort, page]);
+  }, [debouncedSearch, page]);
 
   useEffect(() => { fetchPlayers(); }, [fetchPlayers]);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
-  const hasFilters = debouncedSearch || position || tier || sort !== 'tier_priority';
+  const hasFilters = Boolean(debouncedSearch);
 
   return (
     <div className="players-page">
@@ -91,78 +77,34 @@ export default function PlayersPage() {
           <div>
             <h1 className="players-page__title">ทำเนียบนักเตะ</h1>
             <p className="players-page__subtitle">
-              eFootball Player Database · {total.toLocaleString()} การ์ดนักเตะ
+              eFootball Player Database · {total.toLocaleString()} การ์ดนักเตะ (เรียงตามการ์ดเข้าใหม่ล่าสุด eFHUB)
             </p>
           </div>
         </div>
       </div>
 
-      {/* ── Filter Bar ── */}
+      {/* ── Filter Bar: ค้นหาชื่อนักเตะ ── */}
       <div className="players-page__filters">
-        {/* Search */}
-        <div className="players-filter__search-wrap">
+        <div className="players-filter__search-wrap players-filter__search-wrap--wide">
           <span className="players-filter__search-icon">🔍</span>
           <input
             id="players-search"
             type="search"
             className="players-filter__search"
-            placeholder="ค้นหาชื่อนักเตะ... เช่น Messi, Del Piero, Bale"
+            placeholder="ค้นหาชื่อนักเตะ... เช่น Messi, Bale, Del Piero, Mbappe, Haaland"
             value={search}
             onChange={handleSearchChange}
+            autoComplete="off"
           />
         </div>
 
-        {/* Position filter */}
-        <select
-          id="players-position-filter"
-          className="players-filter__select"
-          value={position}
-          onChange={handlePositionChange}
-        >
-          <option value="">ทุกตำแหน่ง</option>
-          {POSITIONS.map(p => (
-            <option key={p} value={p}>{p}</option>
-          ))}
-        </select>
-
-        {/* Card Tier filter — matching eFHUB Player Types */}
-        <select
-          id="players-tier-filter"
-          className="players-filter__select"
-          value={tier}
-          onChange={handleTierChange}
-        >
-          <option value="">⭐ ทุกประเภทการ์ด (All)</option>
-          <option value="big_time">🔴 Big Time</option>
-          <option value="epic">🟡 Epic</option>
-          <option value="show_time">🔵 Show Time</option>
-          <option value="highlight">🟢 Highlight / Featured</option>
-          <option value="potw">🟣 POTW (Player of the Week)</option>
-          <option value="normal">⚪ Standard (Normal)</option>
-        </select>
-
-        {/* Sort order select */}
-        <select
-          id="players-sort-select"
-          className="players-filter__select"
-          value={sort}
-          onChange={handleSortChange}
-        >
-          <option value="tier_priority">⭐ จัดเรียง: การ์ดใหม่ & Big Time → Epic → Show Time → Featured</option>
-          <option value="newest">🕒 การ์ดเข้าใหม่ล่าสุด (ตามเวอร์ชันล้วนๆ)</option>
-          <option value="ovr_desc">📈 OVR สูงสุด</option>
-          <option value="ovr_asc">📉 OVR ต่ำสุด</option>
-          <option value="name_asc">🔤 ชื่อ A-Z</option>
-        </select>
-
-        {/* Clear */}
         {hasFilters && (
           <button
             id="players-clear-filters"
             className="players-filter__clear"
             onClick={handleClearFilters}
           >
-            ✕ ล้างตัวกรอง
+            ✕ ล้างการค้นหา
           </button>
         )}
       </div>

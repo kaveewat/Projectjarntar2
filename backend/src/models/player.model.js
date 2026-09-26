@@ -23,7 +23,7 @@ const findAll = async ({
   tier = null,
   position = null,
   game_id = null,
-  sort = 'tier_priority',
+  sort = 'newest',
   limit = 20,
   offset = 0,
 }) => {
@@ -85,30 +85,26 @@ const findAll = async ({
   const total = countRows[0] ? countRows[0].total : 0;
 
   // Determine sort order
-  // Tier priority: Big Time (1) → Epic (2) → Show Time (3) → Highlight/Featured (4) → POTW (5) → Standard (6)
-  const TIER_CASE = `
-    CASE
-      WHEN ct.slug IN ('big_time', 'big-time', 'bigtime') THEN 1
-      WHEN ct.slug IN ('epic') THEN 2
-      WHEN ct.slug IN ('show_time', 'show-time', 'showtime') THEN 3
-      WHEN ct.slug IN ('highlight', 'featured') THEN 4
-      WHEN ct.slug IN ('potw') THEN 5
-      ELSE 6
-    END
-  `;
+  // Default: Pure newest to oldest matching eFHUB (efhub_id DESC, id DESC)
+  let orderByClause = 'ORDER BY pc.efhub_id DESC, pc.id DESC';
 
-  let orderByClause;
-  if (sort === 'newest') {
-    // Pure newest: ignore tier, sort only by efhub_id then DB id
-    orderByClause = 'ORDER BY pc.efhub_id DESC, pc.id DESC';
-  } else if (sort === 'ovr_desc') {
+  if (sort === 'ovr_desc') {
     orderByClause = 'ORDER BY pc.overall_rating DESC, pc.efhub_id DESC';
   } else if (sort === 'ovr_asc') {
     orderByClause = 'ORDER BY pc.overall_rating ASC, pc.efhub_id ASC';
   } else if (sort === 'name_asc') {
     orderByClause = 'ORDER BY pc.player_name ASC, pc.efhub_id DESC';
-  } else {
-    // Default: tier_priority — group strictly by tier, then newest within each tier
+  } else if (sort === 'tier_priority') {
+    const TIER_CASE = `
+      CASE
+        WHEN ct.slug IN ('big_time', 'big-time', 'bigtime') THEN 1
+        WHEN ct.slug IN ('epic') THEN 2
+        WHEN ct.slug IN ('show_time', 'show-time', 'showtime') THEN 3
+        WHEN ct.slug IN ('highlight', 'featured') THEN 4
+        WHEN ct.slug IN ('potw') THEN 5
+        ELSE 6
+      END
+    `;
     orderByClause = `ORDER BY ${TIER_CASE} ASC, pc.efhub_id DESC, pc.id DESC`;
   }
 

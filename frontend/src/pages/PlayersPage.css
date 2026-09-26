@@ -90,6 +90,10 @@
   min-width: 220px;
 }
 
+.players-filter__search-wrap--wide {
+  max-width: 600px;
+}
+
 .players-filter__search-icon {
   position: absolute;
   left: 0.85rem;
