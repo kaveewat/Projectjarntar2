@@ -51,7 +51,7 @@ const findAll = async ({
   // When no specific search, tier, or pack is requested, default to only modern new pack players
   // Exactly matching eFHUB new-players catalog as requested by user
   if (!name && !tier && !pack && scope !== 'all') {
-    conditions.push('pc.season IS NOT NULL');
+    conditions.push("pc.season IS NOT NULL AND pc.season != '2025'");
   }
 
   if (tier) {
@@ -102,20 +102,20 @@ const findAll = async ({
   let orderByClause = `
     ORDER BY
       CASE
-        WHEN pc.season = 'Power Tackle' THEN 1
-        WHEN pc.season = "European Clubs Selection 24 Sep '26" THEN 2
-        WHEN pc.season = 'National All Stars' THEN 3
-        WHEN pc.season = "Featured Match 28 Sep '26" THEN 4
-        WHEN pc.season = 'Eric Cantona' THEN 5
-        WHEN pc.season = 'Ranking Event Rewards 2027' THEN 6
-        WHEN pc.season = "Trendyol Süper Lig Monthly MVPs Aug '26" THEN 7
-        WHEN pc.season = "International Match Campaign Sep '26" THEN 8
-        WHEN pc.season = 'Road to CAF AFCON 2027' THEN 9
-        WHEN pc.season = 'Anticipated Standouts 26-27' THEN 10
-        WHEN pc.season = "POTM Trendyol Süper Lig 24 Sep '26" THEN 11
-        WHEN pc.season = "POTM Brasileirão Betano 24 Sep '26" THEN 12
-        WHEN pc.season = "POTM J1 LEAGUE 24 Sep '26" THEN 13
-        WHEN pc.season IS NOT NULL THEN 15
+        WHEN pc.season LIKE 'Power Tackle%' THEN 1
+        WHEN pc.season LIKE 'European Clubs%' THEN 2
+        WHEN pc.season LIKE 'National All Stars%' THEN 3
+        WHEN pc.season LIKE 'Featured Match%' THEN 4
+        WHEN pc.season LIKE 'Eric Cantona%' THEN 5
+        WHEN pc.season LIKE 'Ranking Event%' THEN 6
+        WHEN pc.season LIKE 'Trendyol Süper Lig Monthly%' THEN 7
+        WHEN pc.season LIKE 'International Match%' THEN 8
+        WHEN pc.season LIKE 'Road to CAF%' THEN 9
+        WHEN pc.season LIKE 'Anticipated Standouts%' THEN 10
+        WHEN pc.season LIKE 'POTM Trendyol%' THEN 11
+        WHEN pc.season LIKE 'POTM Brasileirão%' THEN 12
+        WHEN pc.season LIKE 'POTM J1%' THEN 13
+        WHEN pc.season IS NOT NULL AND pc.season != '2025' THEN 15
         ELSE 99
       END ASC,
       CAST(pc.efhub_id AS UNSIGNED) DESC,
@@ -483,23 +483,23 @@ const getPacks = async () => {
   const sql = `
     SELECT season AS name, COUNT(*) AS count
     FROM player_cards
-    WHERE season IS NOT NULL AND season != '' AND is_active = 1
+    WHERE season IS NOT NULL AND season != '' AND season != '2025' AND is_active = 1
     GROUP BY season
     ORDER BY
       CASE
-        WHEN season = 'Power Tackle' THEN 1
-        WHEN season = "European Clubs Selection 24 Sep '26" THEN 2
-        WHEN season = 'National All Stars' THEN 3
-        WHEN season = "Featured Match 28 Sep '26" THEN 4
-        WHEN season = 'Eric Cantona' THEN 5
-        WHEN season = 'Ranking Event Rewards 2027' THEN 6
-        WHEN season = "Trendyol Süper Lig Monthly MVPs Aug '26" THEN 7
-        WHEN season = "International Match Campaign Sep '26" THEN 8
-        WHEN season = 'Road to CAF AFCON 2027' THEN 9
-        WHEN season = 'Anticipated Standouts 26-27' THEN 10
-        WHEN season = "POTM Trendyol Süper Lig 24 Sep '26" THEN 11
-        WHEN season = "POTM Brasileirão Betano 24 Sep '26" THEN 12
-        WHEN season = "POTM J1 LEAGUE 24 Sep '26" THEN 13
+        WHEN season LIKE 'Power Tackle%' THEN 1
+        WHEN season LIKE 'European Clubs%' THEN 2
+        WHEN season LIKE 'National All Stars%' THEN 3
+        WHEN season LIKE 'Featured Match%' THEN 4
+        WHEN season LIKE 'Eric Cantona%' THEN 5
+        WHEN season LIKE 'Ranking Event%' THEN 6
+        WHEN season LIKE 'Trendyol Süper Lig Monthly%' THEN 7
+        WHEN season LIKE 'International Match%' THEN 8
+        WHEN season LIKE 'Road to CAF%' THEN 9
+        WHEN season LIKE 'Anticipated Standouts%' THEN 10
+        WHEN season LIKE 'POTM Trendyol%' THEN 11
+        WHEN season LIKE 'POTM Brasileirão%' THEN 12
+        WHEN season LIKE 'POTM J1%' THEN 13
         ELSE 20
       END ASC
   `;
