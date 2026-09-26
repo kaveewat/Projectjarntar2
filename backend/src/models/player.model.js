@@ -98,7 +98,7 @@ const findAll = async ({
   const total = countRows[0] ? countRows[0].total : 0;
 
   // Determine sort order
-  // Default: Pure newest cards matching eFHUB packs order, then strictly newest card generation (CAST efhub_id DESC)
+  // Default: Pure newest cards matching eFHUB packs order, then Epics first within pack, then strictly newest card generation (CAST efhub_id DESC)
   let orderByClause = `
     ORDER BY
       CASE
@@ -117,6 +117,12 @@ const findAll = async ({
         WHEN pc.season LIKE 'POTM J1%' THEN 13
         WHEN pc.season IS NOT NULL AND pc.season != '2025' THEN 15
         ELSE 99
+      END ASC,
+      CASE
+        WHEN pc.card_tier_id = 2 THEN 1
+        WHEN pc.card_tier_id = 4 THEN 2
+        WHEN pc.card_tier_id = 3 THEN 3
+        ELSE 5
       END ASC,
       CAST(pc.efhub_id AS UNSIGNED) DESC,
       pc.overall_rating DESC
