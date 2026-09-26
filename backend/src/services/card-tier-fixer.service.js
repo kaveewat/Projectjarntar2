@@ -162,7 +162,7 @@ async function fixCardTiers() {
          AND overall_rating < 85`
     );
 
-    // 9. Ensure Latest Power Tackle Pack Cards (Bonucci, Chiellini, De Rossi) & Newest eFHUB Players exist
+    // 9. Sync All eFHUB New Players Packs (103 cards across 13 packs) into database
     try {
       const [posRows] = await db.query('SELECT id, code FROM positions');
       const posMap = {};
@@ -176,162 +176,79 @@ async function fixCardTiers() {
         tierMap[t.slug.toLowerCase()] = t.id;
       });
 
-      const latestCards = [
-        {
-          player_name: 'Leonardo Bonucci',
-          overall_rating: 87,
-          position_id: posMap['CB'] || 2,
-          card_tier_id: tierMap['epic'] || 2,
-          efhub_id: '88045755859255',
-          image_url: 'https://efimg.com/efootballhub22/images/player_cards/88045755859255_l.png',
-          nationality: 'Italy',
-          club: 'Italy',
-        },
-        {
-          player_name: 'Giorgio Chiellini',
-          overall_rating: 87,
-          position_id: posMap['CB'] || 2,
-          card_tier_id: tierMap['epic'] || 2,
-          efhub_id: '88045755835027',
-          image_url: 'https://efimg.com/efootballhub22/images/player_cards/88045755835027_l.png',
-          nationality: 'Italy',
-          club: 'Italy',
-        },
-        {
-          player_name: 'Daniele De Rossi',
-          overall_rating: 86,
-          position_id: posMap['DMF'] || 5,
-          card_tier_id: tierMap['epic'] || 2,
-          efhub_id: '88045755829779',
-          image_url: 'https://efimg.com/efootballhub22/images/player_cards/88045755829779_l.png',
-          nationality: 'Italy',
-          club: 'Italy',
-        },
-        {
-          player_name: 'Joe Gomez',
-          overall_rating: 81,
-          position_id: posMap['CB'] || 2,
-          card_tier_id: tierMap['highlight'] || 5,
-          efhub_id: '105872017692561',
-          image_url: 'https://efimg.com/efootballhub22/images/player_cards/105872017692561_l.png',
-          nationality: 'England',
-          club: 'Liverpool',
-        },
-        {
-          player_name: 'Fabian Schär',
-          overall_rating: 81,
-          position_id: posMap['CB'] || 2,
-          card_tier_id: tierMap['highlight'] || 5,
-          efhub_id: '105872017647710',
-          image_url: 'https://efimg.com/efootballhub22/images/player_cards/105872017647710_l.png',
-          nationality: 'Switzerland',
-          club: 'Newcastle United',
-        },
-        {
-          player_name: 'Ola Aina',
-          overall_rating: 81,
-          position_id: posMap['RB'] || 4,
-          card_tier_id: tierMap['highlight'] || 5,
-          efhub_id: '105872017697151',
-          image_url: 'https://efimg.com/efootballhub22/images/player_cards/105872017697151_l.png',
-          nationality: 'Nigeria',
-          club: 'Nottingham Forest',
-        },
-        {
-          player_name: 'Matty Cash',
-          overall_rating: 81,
-          position_id: posMap['RB'] || 4,
-          card_tier_id: tierMap['highlight'] || 5,
-          efhub_id: '105872017702253',
-          image_url: 'https://efimg.com/efootballhub22/images/player_cards/105872017702253_l.png',
-          nationality: 'Poland',
-          club: 'Aston Villa',
-        },
-        {
-          player_name: 'Leonardo Spinazzola',
-          overall_rating: 81,
-          position_id: posMap['LB'] || 3,
-          card_tier_id: tierMap['highlight'] || 5,
-          efhub_id: '105872017688854',
-          image_url: 'https://efimg.com/efootballhub22/images/player_cards/105872017688854_l.png',
-          nationality: 'Italy',
-          club: 'Napoli',
-        },
-        {
-          player_name: 'Pierre Lees Melou',
-          overall_rating: 80,
-          position_id: posMap['DMF'] || 5,
-          card_tier_id: tierMap['highlight'] || 5,
-          efhub_id: '105872017697490',
-          image_url: 'https://efimg.com/efootballhub22/images/player_cards/105872017697490_l.png',
-          nationality: 'France',
-          club: 'Brest',
-        },
-        {
-          player_name: 'Antonio Raíllo',
-          overall_rating: 80,
-          position_id: posMap['CB'] || 2,
-          card_tier_id: tierMap['highlight'] || 5,
-          efhub_id: '105872017697333',
-          image_url: 'https://efimg.com/efootballhub22/images/player_cards/105872017697333_l.png',
-          nationality: 'Spain',
-          club: 'Mallorca',
-        },
-        {
-          player_name: 'Eric Dier',
-          overall_rating: 80,
-          position_id: posMap['CB'] || 2,
-          card_tier_id: tierMap['highlight'] || 5,
-          efhub_id: '105872017635655',
-          image_url: 'https://efimg.com/efootballhub22/images/player_cards/105872017635655_l.png',
-          nationality: 'England',
-          club: 'FC Bayern München',
-        },
-      ];
+      let newPlayersData = [];
+      try {
+        newPlayersData = require('../data/efhub-new-players.json');
+      } catch (loadErr) {
+        logger.warn(`[CardTierFixer] Could not load efhub-new-players.json: ${loadErr.message}`);
+      }
 
-      for (const card of latestCards) {
-        const [existing] = await db.query(
-          'SELECT id FROM player_cards WHERE efhub_id = ? LIMIT 1',
-          [card.efhub_id]
-        );
+      let insertedCount = 0;
+      let updatedCount = 0;
 
-        if (existing && existing.length > 0) {
-          await db.query(
-            `UPDATE player_cards
-             SET player_name = ?, overall_rating = ?, position_id = ?, card_tier_id = ?,
-                 image_url = ?, nationality = ?, club = ?, is_active = 1
-             WHERE id = ?`,
-            [
-              card.player_name,
-              card.overall_rating,
-              card.position_id,
-              card.card_tier_id,
-              card.image_url,
-              card.nationality,
-              card.club,
-              existing[0].id,
-            ]
+      for (const pack of newPlayersData) {
+        const packTitle = pack.packTitle;
+        for (const card of pack.players) {
+          const posId = posMap[card.pos.toUpperCase()] || 2;
+          
+          // Determine Tier
+          let tierId = tierMap['highlight'] || 5;
+          const isEpic = (
+            card.efhub_id === '88045755828961' || // Eric Cantona eF27
+            packTitle === 'Eric Cantona' ||
+            ['Leonardo Bonucci', 'Giorgio Chiellini', 'Daniele De Rossi', 'Alessandro Del Piero', 'Tomas Rosicky'].includes(card.name) ||
+            LEGEND_NAMES.some(leg => card.name.toLowerCase().includes(leg.toLowerCase()))
           );
-        } else {
-          await db.query(
-            `INSERT INTO player_cards
-              (game_id, card_tier_id, position_id, player_name, overall_rating, efhub_id, image_url, nationality, club, is_active, base_value)
-             VALUES
-              (1, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0)`,
-            [
-              card.card_tier_id,
-              card.position_id,
-              card.player_name,
-              card.overall_rating,
-              card.efhub_id,
-              card.image_url,
-              card.nationality,
-              card.club,
-            ]
+
+          if (isEpic) {
+            tierId = tierMap['epic'] || 2;
+          } else if (packTitle.startsWith('POTM')) {
+            tierId = tierMap['highlight'] || 5;
+          }
+
+          const [existing] = await db.query(
+            'SELECT id FROM player_cards WHERE efhub_id = ? LIMIT 1',
+            [card.efhub_id]
           );
+
+          if (existing && existing.length > 0) {
+            await db.query(
+              `UPDATE player_cards
+               SET player_name = ?, overall_rating = ?, position_id = ?, card_tier_id = ?,
+                   image_url = ?, season = ?, is_active = 1
+               WHERE id = ?`,
+              [
+                card.name,
+                card.ovr,
+                posId,
+                tierId,
+                card.image_url,
+                packTitle,
+                existing[0].id,
+              ]
+            );
+            updatedCount++;
+          } else {
+            await db.query(
+              `INSERT INTO player_cards
+                (game_id, card_tier_id, position_id, player_name, overall_rating, efhub_id, image_url, season, is_active, base_value)
+               VALUES
+                (1, ?, ?, ?, ?, ?, ?, ?, 1, 0)`,
+              [
+                tierId,
+                posId,
+                card.name,
+                card.ovr,
+                card.efhub_id,
+                card.image_url,
+                packTitle,
+              ]
+            );
+            insertedCount++;
+          }
         }
       }
-      logger.info('✅ [CardTierFixer] Latest Power Tackle and eFHUB pack cards synced successfully!');
+      logger.info(`✅ [CardTierFixer] eFHUB New Players packs synced: ${insertedCount} inserted, ${updatedCount} updated.`);
     } catch (insertErr) {
       logger.warn(`[CardTierFixer] Error inserting latest pack cards: ${insertErr.message}`);
     }

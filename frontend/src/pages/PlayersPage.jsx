@@ -12,11 +12,24 @@ export default function PlayersPage() {
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
 
-  // Search Filter
+  // Search & Pack Filters
   const [search, setSearch]                 = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [packs, setPacks]                   = useState([]);
+  const [selectedPack, setSelectedPack]     = useState('');
   const [page, setPage]                     = useState(1);
   const searchTimer                         = useRef(null);
+
+  // Fetch available packs on mount
+  useEffect(() => {
+    api.get('/players/packs')
+      .then(res => {
+        if (res.data?.success && res.data.data?.packs) {
+          setPacks(res.data.data.packs);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSearchChange = (e) => {
     const val = e.target.value;
@@ -31,6 +44,7 @@ export default function PlayersPage() {
   const handleClearFilters = () => {
     setSearch('');
     setDebouncedSearch('');
+    setSelectedPack('');
     setPage(1);
   };
 
@@ -44,6 +58,7 @@ export default function PlayersPage() {
         sort: 'newest', // เรียงจากการ์ดใหม่ล่าสุด -> เก่า ตาม eFHUB
       };
       if (debouncedSearch) params.name = debouncedSearch;
+      if (selectedPack) params.pack = selectedPack;
 
       const res = await api.get('/players', { params });
       if (res.data?.success && Array.isArray(res.data.data)) {
@@ -61,12 +76,12 @@ export default function PlayersPage() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, page]);
+  }, [debouncedSearch, selectedPack, page]);
 
   useEffect(() => { fetchPlayers(); }, [fetchPlayers]);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
-  const hasFilters = Boolean(debouncedSearch);
+  const hasFilters = Boolean(debouncedSearch || selectedPack);
 
   return (
     <div className="players-page">
@@ -75,15 +90,15 @@ export default function PlayersPage() {
         <div className="players-page__hero-content">
           <div className="players-page__hero-icon">⚽</div>
           <div>
-            <h1 className="players-page__title">ทำเนียบนักเตะ</h1>
+            <h1 className="players-page__title">ทำเนียบนักเตะใหม่ (New Players)</h1>
             <p className="players-page__subtitle">
-              eFootball Player Database · {total.toLocaleString()} การ์ดนักเตะ (เรียงตามการ์ดเข้าใหม่ล่าสุด eFHUB)
+              การ์ดผู้เล่นล่าสุดที่เพิ่มเข้ามาใน eFootball — แพ็ก เอเยนต์ และการ์ดธีมพิเศษ อัปเดตทุกเวอร์ชัน (เรียงตาม eFHUB)
             </p>
           </div>
         </div>
       </div>
 
-      {/* ── Filter Bar: ค้นหาชื่อนักเตะ ── */}
+      {/* ── Filter Bar: ค้นหาชื่อนักเตะ & เลือกแพ็ก ── */}
       <div className="players-page__filters">
         <div className="players-filter__search-wrap players-filter__search-wrap--wide">
           <span className="players-filter__search-icon">🔍</span>
@@ -91,7 +106,7 @@ export default function PlayersPage() {
             id="players-search"
             type="search"
             className="players-filter__search"
-            placeholder="ค้นหาชื่อนักเตะ... เช่น Bonucci, Chiellini, De Rossi, Messi, Bale"
+            placeholder="ค้นหาชื่อนักเตะ... เช่น Cantona, Bonucci, Chiellini, De Rossi, Isak, Valverde"
             value={search}
             onChange={handleSearchChange}
             autoComplete="off"
@@ -106,6 +121,27 @@ export default function PlayersPage() {
           >
             ✕ ล้างการค้นหา
           </button>
+        )}
+
+        {/* ── Pack Filter Pills ── */}
+        {packs.length > 0 && (
+          <div className="players-pack-pills">
+            <button
+              className={`players-pack-pill ${!selectedPack ? 'active' : ''}`}
+              onClick={() => { setSelectedPack(''); setPage(1); }}
+            >
+              ทั้งหมด ({packs.reduce((acc, p) => acc + Number(p.count), 0)})
+            </button>
+            {packs.map(p => (
+              <button
+                key={p.name}
+                className={`players-pack-pill ${selectedPack === p.name ? 'active' : ''}`}
+                onClick={() => { setSelectedPack(selectedPack === p.name ? '' : p.name); setPage(1); }}
+              >
+                {p.name} <span className="players-pack-pill__count">({p.count})</span>
+              </button>
+            ))}
+          </div>
         )}
       </div>
 

@@ -23,9 +23,11 @@ const findAll = async ({
   tier = null,
   position = null,
   game_id = null,
+  pack = null,
   sort = 'newest',
   limit = 20,
   offset = 0,
+  scope = null,
 }) => {
   const conditions = [
     'pc.is_active = 1',
@@ -39,6 +41,17 @@ const findAll = async ({
   if (name) {
     conditions.push('pc.player_name LIKE ?');
     params.push(`%${name.trim()}%`);
+  }
+
+  if (pack) {
+    conditions.push('pc.season = ?');
+    params.push(pack.trim());
+  }
+
+  // When no specific search, tier, or pack is requested, default to only modern new pack players
+  // Exactly matching eFHUB new-players catalog as requested by user
+  if (!name && !tier && !pack && scope !== 'all') {
+    conditions.push('pc.season IS NOT NULL');
   }
 
   if (tier) {
@@ -85,24 +98,36 @@ const findAll = async ({
   const total = countRows[0] ? countRows[0].total : 0;
 
   // Determine sort order
-  // Default: Pure newest cards matching eFHUB (Power Tackle: Bonucci, Chiellini, De Rossi first, then newest cards by ID)
+  // Default: Pure newest cards matching eFHUB packs order, then strictly newest card generation (CAST efhub_id DESC)
   let orderByClause = `
     ORDER BY
       CASE
-        WHEN pc.efhub_id = '88045755859255' THEN 1
-        WHEN pc.efhub_id = '88045755835027' THEN 2
-        WHEN pc.efhub_id = '88045755829779' THEN 3
-        ELSE 10
+        WHEN pc.season = 'Power Tackle' THEN 1
+        WHEN pc.season = "European Clubs Selection 24 Sep '26" THEN 2
+        WHEN pc.season = 'National All Stars' THEN 3
+        WHEN pc.season = "Featured Match 28 Sep '26" THEN 4
+        WHEN pc.season = 'Eric Cantona' THEN 5
+        WHEN pc.season = 'Ranking Event Rewards 2027' THEN 6
+        WHEN pc.season = "Trendyol Süper Lig Monthly MVPs Aug '26" THEN 7
+        WHEN pc.season = "International Match Campaign Sep '26" THEN 8
+        WHEN pc.season = 'Road to CAF AFCON 2027' THEN 9
+        WHEN pc.season = 'Anticipated Standouts 26-27' THEN 10
+        WHEN pc.season = "POTM Trendyol Süper Lig 24 Sep '26" THEN 11
+        WHEN pc.season = "POTM Brasileirão Betano 24 Sep '26" THEN 12
+        WHEN pc.season = "POTM J1 LEAGUE 24 Sep '26" THEN 13
+        WHEN pc.season IS NOT NULL THEN 15
+        ELSE 99
       END ASC,
-      pc.id DESC
+      CAST(pc.efhub_id AS UNSIGNED) DESC,
+      pc.overall_rating DESC
   `;
 
   if (sort === 'ovr_desc') {
-    orderByClause = 'ORDER BY pc.overall_rating DESC, pc.efhub_id DESC';
+    orderByClause = 'ORDER BY pc.overall_rating DESC, CAST(pc.efhub_id AS UNSIGNED) DESC';
   } else if (sort === 'ovr_asc') {
-    orderByClause = 'ORDER BY pc.overall_rating ASC, pc.efhub_id ASC';
+    orderByClause = 'ORDER BY pc.overall_rating ASC, CAST(pc.efhub_id AS UNSIGNED) ASC';
   } else if (sort === 'name_asc') {
-    orderByClause = 'ORDER BY pc.player_name ASC, pc.efhub_id DESC';
+    orderByClause = 'ORDER BY pc.player_name ASC, CAST(pc.efhub_id AS UNSIGNED) DESC';
   } else if (sort === 'tier_priority') {
     const TIER_CASE = `
       CASE
@@ -114,7 +139,7 @@ const findAll = async ({
         ELSE 6
       END
     `;
-    orderByClause = `ORDER BY ${TIER_CASE} ASC, pc.efhub_id DESC, pc.id DESC`;
+    orderByClause = `ORDER BY ${TIER_CASE} ASC, CAST(pc.efhub_id AS UNSIGNED) DESC`;
   }
 
   // Get paginated rows
@@ -451,6 +476,37 @@ const getGames = async () => {
   return rows;
 };
 
+/**
+ * Get all available packs from eFHUB
+ */
+const getPacks = async () => {
+  const sql = `
+    SELECT season AS name, COUNT(*) AS count
+    FROM player_cards
+    WHERE season IS NOT NULL AND season != '' AND is_active = 1
+    GROUP BY season
+    ORDER BY
+      CASE
+        WHEN season = 'Power Tackle' THEN 1
+        WHEN season = "European Clubs Selection 24 Sep '26" THEN 2
+        WHEN season = 'National All Stars' THEN 3
+        WHEN season = "Featured Match 28 Sep '26" THEN 4
+        WHEN season = 'Eric Cantona' THEN 5
+        WHEN season = 'Ranking Event Rewards 2027' THEN 6
+        WHEN season = "Trendyol Süper Lig Monthly MVPs Aug '26" THEN 7
+        WHEN season = "International Match Campaign Sep '26" THEN 8
+        WHEN season = 'Road to CAF AFCON 2027' THEN 9
+        WHEN season = 'Anticipated Standouts 26-27' THEN 10
+        WHEN season = "POTM Trendyol Süper Lig 24 Sep '26" THEN 11
+        WHEN season = "POTM Brasileirão Betano 24 Sep '26" THEN 12
+        WHEN season = "POTM J1 LEAGUE 24 Sep '26" THEN 13
+        ELSE 20
+      END ASC
+  `;
+  const [rows] = await db.query(sql);
+  return rows;
+};
+
 module.exports = {
   findAll,
   findAllAdmin,
@@ -462,5 +518,6 @@ module.exports = {
   getTiers,
   getPositions,
   getGames,
+  getPacks,
   resolveImageUrl,
 };

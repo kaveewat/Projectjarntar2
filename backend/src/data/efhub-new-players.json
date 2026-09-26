@@ -1,0 +1,801 @@
+[
+  {
+    "packTitle": "Power Tackle",
+    "count": 11,
+    "players": [
+      {
+        "efhub_id": "88045755859255",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/88045755859255_l.png",
+        "name": "Leonardo Bonucci",
+        "ovr": 87,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "88045755835027",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/88045755835027_l.png",
+        "name": "Giorgio Chiellini",
+        "ovr": 87,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "88045755829779",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/88045755829779_l.png",
+        "name": "Daniele De Rossi",
+        "ovr": 86,
+        "pos": "DMF"
+      },
+      {
+        "efhub_id": "105872017635655",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872017635655_l.png",
+        "name": "Eric Dier",
+        "ovr": 80,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105872017647710",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872017647710_l.png",
+        "name": "Fabian Schar",
+        "ovr": 81,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105872017688854",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872017688854_l.png",
+        "name": "Leonardo Spinazzola",
+        "ovr": 81,
+        "pos": "LB"
+      },
+      {
+        "efhub_id": "105872017692561",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872017692561_l.png",
+        "name": "Joe Gomez",
+        "ovr": 81,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105872017697151",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872017697151_l.png",
+        "name": "Ola Aina",
+        "ovr": 81,
+        "pos": "RB"
+      },
+      {
+        "efhub_id": "105872017697333",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872017697333_l.png",
+        "name": "Antonio Raillo",
+        "ovr": 80,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105872017697490",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872017697490_l.png",
+        "name": "Pierre Lees Melou",
+        "ovr": 80,
+        "pos": "DMF"
+      },
+      {
+        "efhub_id": "105872017702253",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872017702253_l.png",
+        "name": "Matty Cash",
+        "ovr": 81,
+        "pos": "RB"
+      }
+    ]
+  },
+  {
+    "packTitle": "European Clubs Selection 24 Sep '26",
+    "count": 8,
+    "players": [
+      {
+        "efhub_id": "105873359879415",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105873359879415_l.png",
+        "name": "Federico Valverde",
+        "ovr": 84,
+        "pos": "CMF"
+      },
+      {
+        "efhub_id": "105873359880583",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105873359880583_l.png",
+        "name": "Alexander Isak",
+        "ovr": 84,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "105873359885339",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105873359885339_l.png",
+        "name": "Anthony Gordon",
+        "ovr": 82,
+        "pos": "LWF"
+      },
+      {
+        "efhub_id": "105873359893929",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105873359893929_l.png",
+        "name": "Edmond Tapsoba",
+        "ovr": 84,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105873359900298",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105873359900298_l.png",
+        "name": "Goncalo Ramos",
+        "ovr": 82,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "105873359905555",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105873359905555_l.png",
+        "name": "Piero Hincapie",
+        "ovr": 83,
+        "pos": "LB"
+      },
+      {
+        "efhub_id": "105873359913676",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105873359913676_l.png",
+        "name": "Maghnes Akliouche",
+        "ovr": 82,
+        "pos": "RMF"
+      },
+      {
+        "efhub_id": "105873359923147",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105873359923147_l.png",
+        "name": "Mateus Fernandes",
+        "ovr": 82,
+        "pos": "CMF"
+      }
+    ]
+  },
+  {
+    "packTitle": "National All Stars",
+    "count": 26,
+    "players": [
+      {
+        "efhub_id": "89139630444046",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/89139630444046_l.png",
+        "name": "Alessandro Del Piero",
+        "ovr": 87,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "88045755960774",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/88045755960774_l.png",
+        "name": "Tomas Rosicky",
+        "ovr": 86,
+        "pos": "AMF"
+      },
+      {
+        "efhub_id": "88045755960761",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/88045755960761_l.png",
+        "name": "Carles Puyol",
+        "ovr": 86,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "88045755861672",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/88045755861672_l.png",
+        "name": "Gareth Bale",
+        "ovr": 87,
+        "pos": "RWF"
+      },
+      {
+        "efhub_id": "88045755828950",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/88045755828950_l.png",
+        "name": "George Best",
+        "ovr": 89,
+        "pos": "RWF"
+      },
+      {
+        "efhub_id": "88045755827094",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/88045755827094_l.png",
+        "name": "Edwin van der Sar",
+        "ovr": 87,
+        "pos": "GK"
+      },
+      {
+        "efhub_id": "105868259602370",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259602370_l.png",
+        "name": "Philipp Lienhart",
+        "ovr": 81,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105868259603324",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259603324_l.png",
+        "name": "Riccardo Orsolini",
+        "ovr": 82,
+        "pos": "RWF"
+      },
+      {
+        "efhub_id": "105868259605081",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259605081_l.png",
+        "name": "Brandon Mechele",
+        "ovr": 80,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105868259632040",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259632040_l.png",
+        "name": "Danilo",
+        "ovr": 81,
+        "pos": "DMF"
+      },
+      {
+        "efhub_id": "105868259665891",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259665891_l.png",
+        "name": "Assan Ouedraogo",
+        "ovr": 81,
+        "pos": "CMF"
+      },
+      {
+        "efhub_id": "105868259552716",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259552716_l.png",
+        "name": "Jhon Cordoba",
+        "ovr": 80,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "105868259600032",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259600032_l.png",
+        "name": "Denis Bouanga",
+        "ovr": 81,
+        "pos": "LWF"
+      },
+      {
+        "efhub_id": "105868259601204",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259601204_l.png",
+        "name": "Ivan Toney",
+        "ovr": 82,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "105868259602360",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259602360_l.png",
+        "name": "Gonzalo Montiel",
+        "ovr": 79,
+        "pos": "RB"
+      },
+      {
+        "efhub_id": "105868259602535",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259602535_l.png",
+        "name": "Simon Banza",
+        "ovr": 80,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "105868259605436",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259605436_l.png",
+        "name": "Dominik Livakovic",
+        "ovr": 81,
+        "pos": "GK"
+      },
+      {
+        "efhub_id": "105868259609236",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259609236_l.png",
+        "name": "Dennis Man",
+        "ovr": 79,
+        "pos": "RWF"
+      },
+      {
+        "efhub_id": "105868259609299",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259609299_l.png",
+        "name": "Mattias Svanberg",
+        "ovr": 79,
+        "pos": "CMF"
+      },
+      {
+        "efhub_id": "105868259612150",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259612150_l.png",
+        "name": "K. Mavropanos",
+        "ovr": 80,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105868259624464",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259624464_l.png",
+        "name": "Troy Parrott",
+        "ovr": 80,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "105868259638236",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259638236_l.png",
+        "name": "Fredrik Aursnes",
+        "ovr": 81,
+        "pos": "CMF"
+      },
+      {
+        "efhub_id": "105868259643695",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259643695_l.png",
+        "name": "Tomas Araujo",
+        "ovr": 81,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105868259646549",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259646549_l.png",
+        "name": "Jordan Bos",
+        "ovr": 79,
+        "pos": "LB"
+      },
+      {
+        "efhub_id": "105868259649757",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259649757_l.png",
+        "name": "Joel Ordonez",
+        "ovr": 81,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105868259661734",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105868259661734_l.png",
+        "name": "Pavel Sulc",
+        "ovr": 80,
+        "pos": "AMF"
+      }
+    ]
+  },
+  {
+    "packTitle": "Featured Match 28 Sep '26",
+    "count": 8,
+    "players": [
+      {
+        "efhub_id": "106786577226938",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106786577226938_l.png",
+        "name": "Romelu Lukaku",
+        "ovr": 86,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "106786577303471",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106786577303471_l.png",
+        "name": "Dayot Upamecano",
+        "ovr": 86,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105872286068769",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872286068769_l.png",
+        "name": "Lucas Digne",
+        "ovr": 81,
+        "pos": "LB"
+      },
+      {
+        "efhub_id": "105872286136924",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872286136924_l.png",
+        "name": "Hans Vanaken",
+        "ovr": 80,
+        "pos": "AMF"
+      },
+      {
+        "efhub_id": "105872286138257",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872286138257_l.png",
+        "name": "Jean-Philippe Mateta",
+        "ovr": 82,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "105872286145944",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872286145944_l.png",
+        "name": "Alexis Saelemaekers",
+        "ovr": 81,
+        "pos": "RMF"
+      },
+      {
+        "efhub_id": "105872286157333",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872286157333_l.png",
+        "name": "Rayan Cherki",
+        "ovr": 81,
+        "pos": "AMF"
+      },
+      {
+        "efhub_id": "105872286167080",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105872286167080_l.png",
+        "name": "Zeno Debast",
+        "ovr": 81,
+        "pos": "CB"
+      }
+    ]
+  },
+  {
+    "packTitle": "Eric Cantona",
+    "count": 1,
+    "players": [
+      {
+        "efhub_id": "88045755828961",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/88045755828961_l.png",
+        "name": "Eric Cantona",
+        "ovr": 84,
+        "pos": "CF"
+      }
+    ]
+  },
+  {
+    "packTitle": "Ranking Event Rewards 2027",
+    "count": 2,
+    "players": [
+      {
+        "efhub_id": "106798656890465",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106798656890465_l.png",
+        "name": "Lucas Torreira",
+        "ovr": 81,
+        "pos": "DMF"
+      },
+      {
+        "efhub_id": "106798656929345",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106798656929345_l.png",
+        "name": "Archie Brown",
+        "ovr": 81,
+        "pos": "LB"
+      }
+    ]
+  },
+  {
+    "packTitle": "Trendyol Süper Lig Monthly MVPs Aug '26",
+    "count": 11,
+    "players": [
+      {
+        "efhub_id": "106793288194328",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106793288194328_l.png",
+        "name": "Vedat Muriqi",
+        "ovr": 83,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "106793288192357",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106793288192357_l.png",
+        "name": "Gabriel Sara",
+        "ovr": 82,
+        "pos": "AMF"
+      },
+      {
+        "efhub_id": "106793288192916",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106793288192916_l.png",
+        "name": "Leandro Trossard",
+        "ovr": 83,
+        "pos": "LWF"
+      },
+      {
+        "efhub_id": "106793288250967",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106793288250967_l.png",
+        "name": "Sidny Cabral",
+        "ovr": 82,
+        "pos": "RB"
+      },
+      {
+        "efhub_id": "105887050020920",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105887050020920_l.png",
+        "name": "Andreas Gianniotis",
+        "ovr": 79,
+        "pos": "GK"
+      },
+      {
+        "efhub_id": "105887050104767",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105887050104767_l.png",
+        "name": "Berat Ozdemir",
+        "ovr": 79,
+        "pos": "DMF"
+      },
+      {
+        "efhub_id": "105887050119389",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105887050119389_l.png",
+        "name": "Malcom Bokele",
+        "ovr": 79,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105887050119933",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105887050119933_l.png",
+        "name": "Bertug Yildirim",
+        "ovr": 80,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "105887050131402",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105887050131402_l.png",
+        "name": "Baran Gezek",
+        "ovr": 78,
+        "pos": "DMF"
+      },
+      {
+        "efhub_id": "105887050131736",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105887050131736_l.png",
+        "name": "Tanguy Zoukrou",
+        "ovr": 79,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "105887050144182",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105887050144182_l.png",
+        "name": "Logi Tomasson",
+        "ovr": 78,
+        "pos": "LB"
+      }
+    ]
+  },
+  {
+    "packTitle": "International Match Campaign Sep '26",
+    "count": 3,
+    "players": [
+      {
+        "efhub_id": "106799193700770",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106799193700770_l.png",
+        "name": "Aymeric Laporte",
+        "ovr": 83,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "106799193770861",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106799193770861_l.png",
+        "name": "Weston McKennie",
+        "ovr": 85,
+        "pos": "CMF"
+      },
+      {
+        "efhub_id": "106799193796011",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106799193796011_l.png",
+        "name": "Francisco Conceicao",
+        "ovr": 84,
+        "pos": "RWF"
+      }
+    ]
+  },
+  {
+    "packTitle": "Road to CAF AFCON 2027",
+    "count": 4,
+    "players": [
+      {
+        "efhub_id": "106797935481937",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106797935481937_l.png",
+        "name": "Noussair Mazraoui",
+        "ovr": 82,
+        "pos": "LB"
+      },
+      {
+        "efhub_id": "106797935500212",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106797935500212_l.png",
+        "name": "Calvin Bassey",
+        "ovr": 82,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "106797935502918",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106797935502918_l.png",
+        "name": "Nicolas Jackson",
+        "ovr": 83,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "106797935535829",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106797935535829_l.png",
+        "name": "Ibrahim Maza",
+        "ovr": 82,
+        "pos": "AMF"
+      }
+    ]
+  },
+  {
+    "packTitle": "Anticipated Standouts 26-27",
+    "count": 11,
+    "players": [
+      {
+        "efhub_id": "106786308878577",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106786308878577_l.png",
+        "name": "Jan Paul van Hecke",
+        "ovr": 86,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "106786308879147",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106786308879147_l.png",
+        "name": "Joao Pedro",
+        "ovr": 87,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "106786308889284",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/106786308889284_l.png",
+        "name": "Florian Wirtz",
+        "ovr": 86,
+        "pos": "AMF"
+      },
+      {
+        "efhub_id": "105871749197857",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105871749197857_l.png",
+        "name": "Lucas Digne",
+        "ovr": 81,
+        "pos": "LB"
+      },
+      {
+        "efhub_id": "105871749213696",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105871749213696_l.png",
+        "name": "Julian Brandt",
+        "ovr": 81,
+        "pos": "AMF"
+      },
+      {
+        "efhub_id": "105871749253577",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105871749253577_l.png",
+        "name": "Ayoze Perez",
+        "ovr": 82,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "105871749255058",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105871749255058_l.png",
+        "name": "Inaki Williams",
+        "ovr": 81,
+        "pos": "RWF"
+      },
+      {
+        "efhub_id": "105871749263634",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105871749263634_l.png",
+        "name": "Richarlison",
+        "ovr": 80,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "105871749266270",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105871749266270_l.png",
+        "name": "Yoane Wissa",
+        "ovr": 80,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "105871749266790",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105871749266790_l.png",
+        "name": "Caoimhin Kelleher",
+        "ovr": 81,
+        "pos": "GK"
+      },
+      {
+        "efhub_id": "105871749294650",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/105871749294650_l.png",
+        "name": "G. Konstantelias",
+        "ovr": 79,
+        "pos": "LWF"
+      }
+    ]
+  },
+  {
+    "packTitle": "POTM Trendyol Süper Lig 24 Sep '26",
+    "count": 6,
+    "players": [
+      {
+        "efhub_id": "53988007389464",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53988007389464_l.png",
+        "name": "Stefan Savic",
+        "ovr": 93,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "53988007484337",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53988007484337_l.png",
+        "name": "Berkan Kutlu",
+        "ovr": 91,
+        "pos": "AMF"
+      },
+      {
+        "efhub_id": "53988007488402",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53988007488402_l.png",
+        "name": "Salih Ozcan",
+        "ovr": 93,
+        "pos": "DMF"
+      },
+      {
+        "efhub_id": "53988007489314",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53988007489314_l.png",
+        "name": "Franco Tongya",
+        "ovr": 91,
+        "pos": "LMF"
+      },
+      {
+        "efhub_id": "53988007492400",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53988007492400_l.png",
+        "name": "Oguz Aydin",
+        "ovr": 92,
+        "pos": "LMF"
+      },
+      {
+        "efhub_id": "53988007493534",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53988007493534_l.png",
+        "name": "Jankat Yilmaz",
+        "ovr": 91,
+        "pos": "GK"
+      }
+    ]
+  },
+  {
+    "packTitle": "POTM Brasileirão Betano 24 Sep '26",
+    "count": 6,
+    "players": [
+      {
+        "efhub_id": "53990960182623",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53990960182623_l.png",
+        "name": "Carlos Eduardo",
+        "ovr": 92,
+        "pos": "AMF"
+      },
+      {
+        "efhub_id": "53990960246667",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53990960246667_l.png",
+        "name": "Ayrton Lucas",
+        "ovr": 92,
+        "pos": "LB"
+      },
+      {
+        "efhub_id": "53990960264280",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53990960264280_l.png",
+        "name": "Lucas Arcanjo",
+        "ovr": 91,
+        "pos": "GK"
+      },
+      {
+        "efhub_id": "53990960268235",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53990960268235_l.png",
+        "name": "Mauricio",
+        "ovr": 93,
+        "pos": "AMF"
+      },
+      {
+        "efhub_id": "53990960288042",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53990960288042_l.png",
+        "name": "Joao Marcelo",
+        "ovr": 91,
+        "pos": "CB"
+      },
+      {
+        "efhub_id": "53990960304493",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53990960304493_l.png",
+        "name": "Leozinho",
+        "ovr": 91,
+        "pos": "AMF"
+      }
+    ]
+  },
+  {
+    "packTitle": "POTM J1 LEAGUE 24 Sep '26",
+    "count": 6,
+    "players": [
+      {
+        "efhub_id": "53985591563917",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53985591563917_l.png",
+        "name": "Neta Lavi",
+        "ovr": 91,
+        "pos": "DMF"
+      },
+      {
+        "efhub_id": "53985591569948",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53985591569948_l.png",
+        "name": "Funabashi Yu",
+        "ovr": 91,
+        "pos": "DMF"
+      },
+      {
+        "efhub_id": "53985591579280",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53985591579280_l.png",
+        "name": "Suzuki Akito",
+        "ovr": 91,
+        "pos": "CF"
+      },
+      {
+        "efhub_id": "53985591595439",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53985591595439_l.png",
+        "name": "Aleksandar Cavric",
+        "ovr": 92,
+        "pos": "RMF"
+      },
+      {
+        "efhub_id": "53985591601851",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53985591601851_l.png",
+        "name": "Nakagawa Nobuteru",
+        "ovr": 91,
+        "pos": "CMF"
+      },
+      {
+        "efhub_id": "53985591610558",
+        "image_url": "https://efimg.com/efootballhub22/images/player_cards/53985591610558_l.png",
+        "name": "Miidera Shin",
+        "ovr": 91,
+        "pos": "LMF"
+      }
+    ]
+  }
+]

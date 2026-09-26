@@ -12,16 +12,19 @@ const browsePlayers = async (req, res, next) => {
     const limit = Math.max(1, Math.min(100, Number(req.query.limit) || 20));
     const offset = (page - 1) * limit;
 
-    const { name, tier, position, game_id, sort } = req.query;
+    const name = req.query.name || req.query.search;
+    const { tier, position, game_id, pack, sort, scope } = req.query;
 
     const { players, total } = await playerModel.findAll({
       name,
       tier,
       position,
       game_id,
+      pack,
       sort,
       limit,
       offset,
+      scope,
     });
 
     return sendPaginated(res, players, page, limit, total, 'Players catalog retrieved');
@@ -121,12 +124,26 @@ const fixTiers = async (_req, res, next) => {
   }
 };
 
+/**
+ * List available packs
+ * GET /api/v1/players/packs
+ */
+const getPacks = async (_req, res, next) => {
+  try {
+    const packs = await playerModel.getPacks();
+    return sendSuccess(res, { packs }, 'Packs retrieved');
+  } catch (err) {
+    return next(err);
+  }
+};
+
 module.exports = {
   browsePlayers,
   getPlayerDetail,
   getTiers,
   getPositions,
   getGames,
+  getPacks,
   syncLatestCards,
   fixTiers,
 };

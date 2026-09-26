@@ -12,6 +12,7 @@ router.post('/fix-tiers', playersController.fixTiers);
 router.get('/tiers', playersController.getTiers);
 router.get('/positions', playersController.getPositions);
 router.get('/games', playersController.getGames);
+router.get('/packs', playersController.getPacks);
 router.get('/:id', playersController.getPlayerDetail);
 
 module.exports = router;
