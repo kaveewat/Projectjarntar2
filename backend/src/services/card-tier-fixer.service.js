@@ -183,68 +183,79 @@ async function fixCardTiers() {
         logger.warn(`[CardTierFixer] Could not load efhub-new-players.json: ${loadErr.message}`);
       }
 
+      // Ensure season column is large enough for full pack titles
+      try {
+        await db.query('ALTER TABLE player_cards MODIFY COLUMN season VARCHAR(100) NULL');
+      } catch (alterErr) {
+        logger.warn(`[CardTierFixer] Season column alter note: ${alterErr.message}`);
+      }
+
       let insertedCount = 0;
       let updatedCount = 0;
 
       for (const pack of newPlayersData) {
-        const packTitle = pack.packTitle;
+        const packTitle = (pack.packTitle || '').slice(0, 100);
         for (const card of pack.players) {
-          const posId = posMap[card.pos.toUpperCase()] || 2;
-          
-          // Determine Tier
-          let tierId = tierMap['highlight'] || 5;
-          const isEpic = (
-            card.efhub_id === '88045755828961' || // Eric Cantona eF27
-            packTitle === 'Eric Cantona' ||
-            ['Leonardo Bonucci', 'Giorgio Chiellini', 'Daniele De Rossi', 'Alessandro Del Piero', 'Tomas Rosicky'].includes(card.name) ||
-            LEGEND_NAMES.some(leg => card.name.toLowerCase().includes(leg.toLowerCase()))
-          );
-
-          if (isEpic) {
-            tierId = tierMap['epic'] || 2;
-          } else if (packTitle.startsWith('POTM')) {
-            tierId = tierMap['highlight'] || 5;
-          }
-
-          const [existing] = await db.query(
-            'SELECT id FROM player_cards WHERE efhub_id = ? LIMIT 1',
-            [card.efhub_id]
-          );
-
-          if (existing && existing.length > 0) {
-            await db.query(
-              `UPDATE player_cards
-               SET player_name = ?, overall_rating = ?, position_id = ?, card_tier_id = ?,
-                   image_url = ?, season = ?, is_active = 1
-               WHERE id = ?`,
-              [
-                card.name,
-                card.ovr,
-                posId,
-                tierId,
-                card.image_url,
-                packTitle,
-                existing[0].id,
-              ]
+          try {
+            const posId = posMap[card.pos.toUpperCase()] || 2;
+            
+            // Determine Tier
+            let tierId = tierMap['highlight'] || 5;
+            const isEpic = (
+              card.efhub_id === '88045755828961' || // Eric Cantona eF27
+              packTitle === 'Eric Cantona' ||
+              ['Leonardo Bonucci', 'Giorgio Chiellini', 'Daniele De Rossi', 'Alessandro Del Piero', 'Tomas Rosicky'].includes(card.name) ||
+              LEGEND_NAMES.some(leg => card.name.toLowerCase().includes(leg.toLowerCase()))
             );
-            updatedCount++;
-          } else {
-            await db.query(
-              `INSERT INTO player_cards
-                (game_id, card_tier_id, position_id, player_name, overall_rating, efhub_id, image_url, season, is_active, base_value)
-               VALUES
-                (1, ?, ?, ?, ?, ?, ?, ?, 1, 0)`,
-              [
-                tierId,
-                posId,
-                card.name,
-                card.ovr,
-                card.efhub_id,
-                card.image_url,
-                packTitle,
-              ]
+
+            if (isEpic) {
+              tierId = tierMap['epic'] || 2;
+            } else if (packTitle.startsWith('POTM')) {
+              tierId = tierMap['highlight'] || 5;
+            }
+
+            const [existing] = await db.query(
+              'SELECT id FROM player_cards WHERE efhub_id = ? LIMIT 1',
+              [card.efhub_id]
             );
-            insertedCount++;
+
+            if (existing && existing.length > 0) {
+              await db.query(
+                `UPDATE player_cards
+                 SET player_name = ?, overall_rating = ?, position_id = ?, card_tier_id = ?,
+                     image_url = ?, season = ?, is_active = 1
+                 WHERE id = ?`,
+                [
+                  card.name,
+                  card.ovr,
+                  posId,
+                  tierId,
+                  card.image_url,
+                  packTitle,
+                  existing[0].id,
+                ]
+              );
+              updatedCount++;
+            } else {
+              await db.query(
+                `INSERT INTO player_cards
+                  (game_id, card_tier_id, position_id, player_name, overall_rating, efhub_id, image_url, season, is_active, base_value)
+                 VALUES
+                  (1, ?, ?, ?, ?, ?, ?, ?, 1, 0)`,
+                [
+                  tierId,
+                  posId,
+                  card.name,
+                  card.ovr,
+                  card.efhub_id,
+                  card.image_url,
+                  packTitle,
+                ]
+              );
+              insertedCount++;
+            }
+          } catch (cardErr) {
+            logger.warn(`[CardTierFixer] Failed card ${card.name} (${card.efhub_id}): ${cardErr.message}`);
           }
         }
       }
