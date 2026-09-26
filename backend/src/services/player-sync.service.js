@@ -69,10 +69,23 @@ async function fetchPackCards(slug) {
       }
 
       if (id && alt && ovr) {
-        let tierSlug = 'normal';
-        if (ovr >= 95) tierSlug = 'big_time';
-        else if (ovr >= 88) tierSlug = 'epic';
-        else if (ovr >= 84) tierSlug = 'show_time';
+        // ── Tier Detection by Pack Slug and Card Context ─────────────────────
+        let tierSlug = 'highlight'; // default for pack cards
+        const slugLower = slug.toLowerCase();
+
+        if (slugLower.startsWith('potw')) {
+          tierSlug = 'potw';
+        } else if (slugLower.includes('epic')) {
+          tierSlug = 'epic';
+        } else if (slugLower.includes('big-time') || slugLower.includes('big_time')) {
+          tierSlug = 'big_time';
+        } else if (slugLower.includes('show-time') || slugLower.includes('show_time')) {
+          tierSlug = 'show_time';
+        } else if (slugLower.includes('national-teams') || slugLower.includes('european-clubs') || slugLower.includes('selection')) {
+          tierSlug = 'highlight';
+        } else {
+          tierSlug = 'highlight';
+        }
 
         players.push({
           efhub_id: id,
@@ -204,11 +217,29 @@ async function fetchPlayerData(efhubId) {
     // Image URL
     const imageUrl = ogImage || `${CDN_BASE}/${efhubId}_l.png`;
 
-    // Map Tier slug
-    let tierSlug = 'normal';
-    if (ovr >= 95) tierSlug = 'big_time';
-    else if (ovr >= 88) tierSlug = 'epic';
-    else if (ovr >= 84) tierSlug = 'show_time';
+    // ── Tier Detection: explicit signature, keywords, then safe fallback ─────
+    const fullText = `${ogTitle} ${title} ${ogDesc}`.toLowerCase();
+    const { LEGEND_NAMES, BIG_TIME_EFHUB_IDS } = require('./card-tier-fixer.service');
+
+    let tierSlug = 'highlight'; // default for special cards on efhub
+
+    if (BIG_TIME_EFHUB_IDS.includes(String(efhubId))) {
+      tierSlug = 'big_time';
+    } else if (LEGEND_NAMES.some((leg) => playerName.toLowerCase().includes(leg.toLowerCase()))) {
+      tierSlug = 'epic';
+    } else if (/\bbig[\s_-]?time\b/.test(fullText)) {
+      tierSlug = 'big_time';
+    } else if (/\bepic\b/.test(fullText)) {
+      tierSlug = 'epic';
+    } else if (/\bshow[\s_-]?time\b/.test(fullText)) {
+      tierSlug = 'show_time';
+    } else if (/\bpotw\b/.test(fullText)) {
+      tierSlug = 'potw';
+    } else if (ovr < 84) {
+      tierSlug = 'normal';
+    } else {
+      tierSlug = 'highlight';
+    }
 
     return {
       efhub_id: efhubId,
@@ -267,6 +298,7 @@ async function syncLatestPlayers(options = {}) {
          VALUES 
           (1, ?, ?, ?, ?, ?, ?, 1, 0)
          ON DUPLICATE KEY UPDATE
+          card_tier_id = VALUES(card_tier_id),
           overall_rating = VALUES(overall_rating),
           image_url = VALUES(image_url),
           is_active = 1`,
@@ -285,9 +317,7 @@ async function syncLatestPlayers(options = {}) {
     if (addedPlayers.length >= limit) break;
     const packCards = await fetchPackCards(slug);
     for (const card of packCards) {
-      if (!existingSet.has(String(card.efhub_id)) && addedPlayers.length < limit) {
-        await insertCard(card);
-      }
+      await insertCard(card);
     }
   }
 
@@ -313,6 +343,14 @@ async function syncLatestPlayers(options = {}) {
 
     const workers = Array.from({ length: CONCURRENCY }, () => worker());
     await Promise.all(workers);
+  }
+
+  // Run tier cleanup to ensure correct categorization
+  try {
+    const { fixCardTiers } = require('./card-tier-fixer.service');
+    await fixCardTiers();
+  } catch (err) {
+    logger.warn(`[PlayerSync] Post-sync tier fixer error: ${err.message}`);
   }
 
   logger.info(`🎉 [PlayerSync] Finished sync. Added ${addedPlayers.length} new player cards.`);

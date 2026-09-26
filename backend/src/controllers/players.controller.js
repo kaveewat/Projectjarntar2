@@ -96,8 +96,26 @@ const syncLatestCards = async (req, res, next) => {
   try {
     const limit = Number(req.query.limit) || 100;
     const { syncLatestPlayers } = require('../services/player-sync.service');
+    const { fixCardTiers } = require('../services/card-tier-fixer.service');
+
     const result = await syncLatestPlayers({ limit });
-    return sendSuccess(res, result, 'Player cards sync completed');
+    await fixCardTiers();
+
+    return sendSuccess(res, result, 'Player cards sync and tier reclassification completed');
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
+ * Manually trigger card tier reclassification
+ * POST /api/v1/players/fix-tiers
+ */
+const fixTiers = async (_req, res, next) => {
+  try {
+    const { fixCardTiers } = require('../services/card-tier-fixer.service');
+    const result = await fixCardTiers();
+    return sendSuccess(res, result, 'Card tiers classification completed');
   } catch (err) {
     return next(err);
   }
@@ -110,5 +128,6 @@ module.exports = {
   getPositions,
   getGames,
   syncLatestCards,
+  fixTiers,
 };
 

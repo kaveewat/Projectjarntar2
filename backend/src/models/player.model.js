@@ -42,8 +42,23 @@ const findAll = async ({
   }
 
   if (tier) {
-    conditions.push('(ct.slug = ? OR ct.name = ?)');
-    params.push(tier, tier);
+    const t = String(tier).trim().toLowerCase();
+    if (['big_time', 'big-time', 'bigtime'].includes(t)) {
+      conditions.push("ct.slug IN ('big_time', 'big-time', 'bigtime')");
+    } else if (t === 'epic') {
+      conditions.push("ct.slug = 'epic'");
+    } else if (['show_time', 'show-time', 'showtime'].includes(t)) {
+      conditions.push("ct.slug IN ('show_time', 'show-time', 'showtime')");
+    } else if (['highlight', 'featured'].includes(t)) {
+      conditions.push("ct.slug IN ('highlight', 'featured')");
+    } else if (t === 'potw') {
+      conditions.push("ct.slug = 'potw'");
+    } else if (['normal', 'standard'].includes(t)) {
+      conditions.push("ct.slug IN ('normal', 'standard')");
+    } else {
+      conditions.push('(ct.slug = ? OR ct.name = ?)');
+      params.push(tier, tier);
+    }
   }
 
   if (position) {
@@ -70,26 +85,31 @@ const findAll = async ({
   const total = countRows[0] ? countRows[0].total : 0;
 
   // Determine sort order
-  let orderByClause = `
-    ORDER BY 
-      CASE 
-        WHEN ct.slug = 'big_time' THEN 1
-        WHEN ct.slug = 'epic' THEN 2
-        WHEN ct.slug = 'show_time' THEN 3
-        ELSE 4
-      END ASC,
-      pc.efhub_id DESC,
-      pc.overall_rating DESC
+  // Tier priority: Big Time (1) → Epic (2) → Show Time (3) → Highlight/Featured (4) → POTW (5) → Standard (6)
+  const TIER_CASE = `
+    CASE
+      WHEN ct.slug IN ('big_time', 'big-time', 'bigtime') THEN 1
+      WHEN ct.slug IN ('epic') THEN 2
+      WHEN ct.slug IN ('show_time', 'show-time', 'showtime') THEN 3
+      WHEN ct.slug IN ('highlight', 'featured') THEN 4
+      WHEN ct.slug IN ('potw') THEN 5
+      ELSE 6
+    END
   `;
 
+  let orderByClause;
   if (sort === 'newest') {
+    // Pure newest: ignore tier, sort only by efhub_id then DB id
     orderByClause = 'ORDER BY pc.efhub_id DESC, pc.id DESC';
   } else if (sort === 'ovr_desc') {
     orderByClause = 'ORDER BY pc.overall_rating DESC, pc.efhub_id DESC';
   } else if (sort === 'ovr_asc') {
-    orderByClause = 'ORDER BY pc.overall_rating ASC, pc.efhub_id DESC';
+    orderByClause = 'ORDER BY pc.overall_rating ASC, pc.efhub_id ASC';
   } else if (sort === 'name_asc') {
-    orderByClause = 'ORDER BY pc.player_name ASC';
+    orderByClause = 'ORDER BY pc.player_name ASC, pc.efhub_id DESC';
+  } else {
+    // Default: tier_priority — group strictly by tier, then newest within each tier
+    orderByClause = `ORDER BY ${TIER_CASE} ASC, pc.efhub_id DESC, pc.id DESC`;
   }
 
   // Get paginated rows

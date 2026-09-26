@@ -19,6 +19,14 @@ server.listen(PORT, async () => {
   // Initialize and verify database connection
   await db.initConnection();
 
+  // Automatically ensure correct eFHUB card tiers in database
+  try {
+    const { fixCardTiers } = require('./services/card-tier-fixer.service');
+    await fixCardTiers();
+  } catch (tierErr) {
+    logger.warn(`Card tiers auto-fix skipped: ${tierErr.message}`);
+  }
+
   // Start background schedulers via Scheduler Service (Phase 16)
   const schedulerService = require('./services/scheduler.service');
   schedulerService.initSchedulers();

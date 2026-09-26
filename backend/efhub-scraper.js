@@ -179,11 +179,22 @@ async function fetchPlayerData(efhubId) {
     // Image URL: standard CDN pattern
     const imageUrl = ogImage || `${CDN_BASE}/${efhubId}_l.png`;
 
-    // Intelligent Tier mapping based on rating & context
+    // ── Tier Detection: keyword first, then OVR fallback ─────────────────────
+    // Check title + description for explicit tier keywords (most accurate)
+    const fullText = `${ogTitle} ${title} ${ogDesc}`.toLowerCase();
     let tierSlug = 'normal';
-    if (ovr >= 95) tierSlug = 'big_time';
-    else if (ovr >= 88) tierSlug = 'epic';
-    else if (ovr >= 85) tierSlug = 'show_time';
+    if (/\bbig[\s_-]?time\b/.test(fullText) || /\blegendary\b/.test(fullText)) {
+      tierSlug = 'big_time';
+    } else if (/\bepic\b/.test(fullText)) {
+      tierSlug = 'epic';
+    } else if (/\bshow[\s_-]?time\b/.test(fullText) || /\bfeatured\b/.test(fullText)) {
+      tierSlug = 'show_time';
+    } else {
+      // OVR-based fallback (for pages that don't explicitly mention tier)
+      if (ovr >= 95) tierSlug = 'big_time';
+      else if (ovr >= 88) tierSlug = 'epic';
+      else if (ovr >= 85) tierSlug = 'show_time';
+    }
 
     return {
       efhub_id: BigInt(efhubId),

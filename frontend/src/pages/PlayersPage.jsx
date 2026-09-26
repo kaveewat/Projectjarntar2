@@ -125,18 +125,20 @@ export default function PlayersPage() {
           ))}
         </select>
 
-        {/* Card Tier filter */}
+        {/* Card Tier filter — matching eFHUB Player Types */}
         <select
           id="players-tier-filter"
           className="players-filter__select"
           value={tier}
           onChange={handleTierChange}
         >
-          <option value="">ทุกประเภทการ์ด</option>
+          <option value="">⭐ ทุกประเภทการ์ด (All)</option>
           <option value="big_time">🔴 Big Time</option>
           <option value="epic">🟡 Epic</option>
-          <option value="show_time">🔵 Show Time / Featured</option>
-          <option value="normal">⚪ Normal</option>
+          <option value="show_time">🔵 Show Time</option>
+          <option value="highlight">🟢 Highlight / Featured</option>
+          <option value="potw">🟣 POTW (Player of the Week)</option>
+          <option value="normal">⚪ Standard (Normal)</option>
         </select>
 
         {/* Sort order select */}
@@ -146,8 +148,8 @@ export default function PlayersPage() {
           value={sort}
           onChange={handleSortChange}
         >
-          <option value="tier_priority">⭐ จัดเรียง: การ์ดใหม่ & Big Time → Epic → Featured</option>
-          <option value="newest">🕒 การ์ดเข้าใหม่ล่าสุด</option>
+          <option value="tier_priority">⭐ จัดเรียง: การ์ดใหม่ & Big Time → Epic → Show Time → Featured</option>
+          <option value="newest">🕒 การ์ดเข้าใหม่ล่าสุด (ตามเวอร์ชันล้วนๆ)</option>
           <option value="ovr_desc">📈 OVR สูงสุด</option>
           <option value="ovr_asc">📉 OVR ต่ำสุด</option>
           <option value="name_asc">🔤 ชื่อ A-Z</option>

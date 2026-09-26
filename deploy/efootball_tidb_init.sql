@@ -130,9 +130,7 @@ CREATE TABLE `card_tiers` (
 --
 
 LOCK TABLES `card_tiers` WRITE;
-/*!40000 ALTER TABLE `card_tiers` DISABLE KEYS */;
-INSERT INTO `card_tiers` VALUES (1,'Normal','normal',1,'#9E9E9E','2026-09-20 16:32:32'),(2,'Epic','epic',5,'#FFD700','2026-09-20 16:32:32'),(3,'Show Time','show_time',7,'#00E5FF','2026-09-20 16:32:32'),(4,'Big Time','big_time',8,'#FF1744','2026-09-20 16:32:32');
-/*!40000 ALTER TABLE `card_tiers` ENABLE KEYS */;
+INSERT INTO `card_tiers` VALUES (1,'Standard','normal',1,'#9E9E9E','2026-09-20 16:32:32'),(2,'Epic','epic',8,'#FFD700','2026-09-20 16:32:32'),(3,'Show Time','show_time',7,'#00E5FF','2026-09-20 16:32:32'),(4,'Big Time','big_time',10,'#FF1744','2026-09-20 16:32:32'),(5,'Highlight / Featured','highlight',5,'#00E676','2026-09-26 14:00:00'),(6,'POTW','potw',4,'#D500F9','2026-09-26 14:00:00');
 UNLOCK TABLES;
 
 --

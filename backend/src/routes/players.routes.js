@@ -8,6 +8,7 @@ const playersController = require('../controllers/players.controller');
  */
 router.get('/', playersController.browsePlayers);
 router.post('/sync-latest', playersController.syncLatestCards);
+router.post('/fix-tiers', playersController.fixTiers);
 router.get('/tiers', playersController.getTiers);
 router.get('/positions', playersController.getPositions);
 router.get('/games', playersController.getGames);
