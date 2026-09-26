@@ -225,20 +225,6 @@ export default function MarketplacePage() {
             />
           )}
 
-          {filters.has_double_booster && (
-            <Chip
-              label="⚡ มีการ์ด 2 บูสต์"
-              size="small"
-              onDelete={() => removeFilter('has_double_booster')}
-              sx={{
-                bgcolor: 'rgba(245, 158, 11, 0.2)',
-                border: '1px solid rgba(245, 158, 11, 0.6)',
-                color: '#FBBF24',
-                fontWeight: 700,
-              }}
-            />
-          )}
-
           {filters.platform_id && (
             <Chip
               label={`แพลตฟอร์ม: ${

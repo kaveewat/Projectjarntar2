@@ -12,15 +12,13 @@ const browsePlayers = async (req, res, next) => {
     const limit = Math.max(1, Math.min(100, Number(req.query.limit) || 20));
     const offset = (page - 1) * limit;
 
-    const { name, tier, position, game_id, sort, booster, double_booster } = req.query;
+    const { name, tier, position, game_id, sort } = req.query;
 
     const { players, total } = await playerModel.findAll({
       name,
       tier,
       position,
       game_id,
-      booster,
-      double_booster,
       sort,
       limit,
       offset,
